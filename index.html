@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FOC Lecture Notes | Y3S1</title>
+    <meta name="description" content="Fundamentals of Computing lecture notes and presentations for Year 3 Semester 1." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      /* ===== CSS Reset & Variables ===== */
+      *, *::before, *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg-primary: #0a0a12;
+        --bg-secondary: #12121e;
+        --bg-card: rgba(255, 255, 255, 0.04);
+        --bg-card-hover: rgba(255, 255, 255, 0.08);
+        --border-card: rgba(255, 255, 255, 0.08);
+        --border-card-hover: rgba(134, 59, 255, 0.4);
+        --text-primary: #f0eef6;
+        --text-secondary: #9b97b0;
+        --text-muted: #6b6783;
+        --accent-purple: #863bff;
+        --accent-purple-light: #a96bff;
+        --accent-blue: #47bfff;
+        --accent-gradient: linear-gradient(135deg, #863bff 0%, #47bfff 100%);
+        --glow-purple: rgba(134, 59, 255, 0.15);
+        --glow-blue: rgba(71, 191, 255, 0.1);
+        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        --radius-sm: 8px;
+        --radius-md: 14px;
+        --radius-lg: 20px;
+        --radius-xl: 28px;
+        --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      /* ===== Body & Background ===== */
+      body {
+        font-family: var(--font-family);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .bg-effects {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .bg-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.5;
+        animation: float 20s ease-in-out infinite;
+      }
+
+      .bg-orb--purple {
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, var(--glow-purple) 0%, transparent 70%);
+        top: -10%;
+        left: -5%;
+        animation-delay: 0s;
+      }
+
+      .bg-orb--blue {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, var(--glow-blue) 0%, transparent 70%);
+        bottom: -10%;
+        right: -5%;
+        animation-delay: -10s;
+      }
+
+      .bg-orb--small {
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(134, 59, 255, 0.08) 0%, transparent 70%);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation-delay: -5s;
+      }
+
+      .bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        background-size: 60px 60px;
+        mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 100%);
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        25% { transform: translate(30px, -20px) scale(1.05); }
+        50% { transform: translate(-20px, 30px) scale(0.95); }
+        75% { transform: translate(20px, 10px) scale(1.02); }
+      }
+
+      /* ===== Layout ===== */
+      .container {
+        position: relative;
+        z-index: 1;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* ===== Header ===== */
+      .header {
+        padding: 48px 0 20px;
+        text-align: center;
+      }
+
+      .header__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 16px;
+        border-radius: 100px;
+        background: rgba(134, 59, 255, 0.1);
+        border: 1px solid rgba(134, 59, 255, 0.2);
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--accent-purple-light);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 28px;
+        animation: fadeInDown 0.6s ease-out;
+      }
+
+      .header__badge svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .header__title {
+        font-size: clamp(2.4rem, 5vw, 3.6rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin-bottom: 16px;
+        animation: fadeInDown 0.6s ease-out 0.1s both;
+      }
+
+      .header__title-gradient {
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .header__subtitle {
+        font-size: 1.05rem;
+        color: var(--text-secondary);
+        font-weight: 400;
+        max-width: 520px;
+        margin: 0 auto 12px;
+        line-height: 1.6;
+        animation: fadeInDown 0.6s ease-out 0.2s both;
+      }
+
+      .header__divider {
+        width: 60px;
+        height: 3px;
+        background: var(--accent-gradient);
+        border-radius: 100px;
+        margin: 32px auto 0;
+        animation: fadeInDown 0.6s ease-out 0.3s both;
+      }
+
+      /* ===== Topics Grid ===== */
+      .topics {
+        padding: 40px 0 80px;
+      }
+
+      .topics__label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+        animation: fadeInUp 0.5s ease-out 0.4s both;
+      }
+
+      .topics__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+      }
+
+      /* ===== Topic Card ===== */
+      .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 28px;
+        border-radius: var(--radius-lg);
+        background: var(--bg-card);
+        border: 1px solid var(--border-card);
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+        transition:
+          background var(--transition-fast),
+          border-color var(--transition-smooth),
+          transform var(--transition-spring),
+          box-shadow var(--transition-smooth);
+        animation: fadeInUp 0.5s ease-out both;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(135deg, rgba(134, 59, 255, 0.06) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity var(--transition-smooth);
+        pointer-events: none;
+      }
+
+      .card:hover {
+        background: var(--bg-card-hover);
+        border-color: var(--border-card-hover);
+        transform: translateY(-4px);
+        box-shadow:
+          0 8px 32px rgba(134, 59, 255, 0.08),
+          0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .card:hover::before {
+        opacity: 1;
+      }
+
+      .card:hover .card__icon {
+        transform: scale(1.1) rotate(-3deg);
+        background: rgba(134, 59, 255, 0.15);
+        border-color: rgba(134, 59, 255, 0.3);
+      }
+
+      .card:hover .card__arrow {
+        transform: translateX(4px);
+        opacity: 1;
+      }
+
+      .card:active {
+        transform: translateY(-2px) scale(0.99);
+      }
+
+      .card__top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .card__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        background: rgba(134, 59, 255, 0.08);
+        border: 1px solid rgba(134, 59, 255, 0.12);
+        font-size: 1.3rem;
+        transition:
+          transform var(--transition-spring),
+          background var(--transition-fast),
+          border-color var(--transition-fast);
+      }
+
+      .card__number {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        letter-spacing: 0.06em;
+        padding: 6px 12px;
+        border-radius: 100px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .card__title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+      }
+
+      .card__desc {
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        line-height: 1.55;
+        flex: 1;
+      }
+
+      .card__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .card__tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--accent-purple-light);
+        padding: 4px 10px;
+        border-radius: 100px;
+        background: rgba(134, 59, 255, 0.08);
+      }
+
+      .card__tag svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      .card__arrow {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        opacity: 0.6;
+        transition:
+          transform var(--transition-smooth),
+          opacity var(--transition-fast),
+          color var(--transition-fast);
+      }
+
+      .card:hover .card__arrow {
+        color: var(--accent-purple-light);
+      }
+
+      .card__arrow svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* ===== Empty State ===== */
+      .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        color: var(--text-muted);
+      }
+
+      .empty-state__icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      .empty-state__text {
+        font-size: 1rem;
+        font-weight: 500;
+      }
+
+      /* ===== Footer ===== */
+      .footer {
+        padding: 24px 0 40px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      .footer a {
+        color: var(--accent-purple-light);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color var(--transition-fast);
+      }
+
+      .footer a:hover {
+        color: var(--accent-blue);
+      }
+
+      /* ===== Animations ===== */
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ===== Responsive ===== */
+      @media (max-width: 680px) {
+        .header {
+          padding: 36px 0 12px;
+        }
+
+        .topics__grid {
+          grid-template-columns: 1fr;
+        }
+
+        .card {
+          padding: 22px;
+        }
+      }
+
+      /* ===== Scrollbar ===== */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--bg-primary);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.18);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Background Effects -->
+    <div class="bg-effects" aria-hidden="true">
+      <div class="bg-orb bg-orb--purple"></div>
+      <div class="bg-orb bg-orb--blue"></div>
+      <div class="bg-orb bg-orb--small"></div>
+      <div class="bg-grid"></div>
+    </div>
+
+    <div class="container">
+      <!-- Header -->
+      <header class="header" id="header">
+        <div class="header__badge">
+          <svg viewBox="0 0 48 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z" fill="currentColor"/>
+          </svg>
+          Y3S1 — Fundamentals of Computing
+        </div>
+        <h1 class="header__title">
+          <span class="header__title-gradient">FOC Lecture</span> Notes
+        </h1>
+        <p class="header__subtitle">
+          Access all lecture presentations and notes in one place. Select a topic below to begin.
+        </p>
+        <div class="header__divider"></div>
+      </header>
+
+      <!-- Topics Grid -->
+      <section class="topics" id="topics-section">
+        <p class="topics__label">📚 Lecture Topics</p>
+        <div class="topics__grid" id="topics-grid">
+          <!-- Cards are dynamically generated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p>FOC Lecture Notes &copy; 2026 &mdash; Built with ⚡</p>
+      </footer>
+    </div>
+
+    <script>
+      /**
+       * Lecture topics configuration.
+       * Add new topics here as you create more HTML files.
+       * Each entry maps to a lecture HTML file in the same directory.
+       */
+      const topics = [
+        {
+          file: "Topic1_Lecture.html",
+          title: "Topic 1: Lecture",
+          description: "Introduction to Fundamentals of Computing — core concepts, overview, and foundational theory.",
+          icon: "⚡",
+          tag: "Lecture"
+        },
+        // ── Add more topics below ──────────────────────────
+        // {
+        //   file: "Topic2_Lecture.html",
+        //   title: "Topic 2: Lecture",
+        //   description: "Description of topic 2.",
+        //   icon: "🔧",
+        //   tag: "Lecture"
+        // },
+      ];
+
+      const grid = document.getElementById("topics-grid");
+
+      if (topics.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state__icon">📭</div>
+            <p class="empty-state__text">No lecture topics available yet.</p>
+          </div>
+        `;
+      } else {
+        topics.forEach((topic, index) => {
+          const card = document.createElement("a");
+          card.href = `./${topic.file}`;
+          card.className = "card";
+          card.id = `topic-card-${index + 1}`;
+          card.style.animationDelay = `${0.4 + index * 0.08}s`;
+
+          card.innerHTML = `
+            <div class="card__top">
+              <div class="card__icon">${topic.icon}</div>
+              <span class="card__number">TOPIC ${String(index + 1).padStart(2, '0')}</span>
+            </div>
+            <h2 class="card__title">${topic.title}</h2>
+            <p class="card__desc">${topic.description}</p>
+            <div class="card__footer">
+              <span class="card__tag">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+                ${topic.tag}
+              </span>
+              <span class="card__arrow">
+                Open
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"/>
+                  <path d="m12 5 7 7-7 7"/>
+                </svg>
+              </span>
+            </div>
+          `;
+
+          grid.appendChild(card);
+        });
+      }
+    </script>
+  </body>
+</html>
