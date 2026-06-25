@@ -839,7 +839,7 @@ document.querySelectorAll('.copy').forEach((button) => {
       flex-shrink: 0;
     }
 
-    /* Home button specific */
+/* Home button specific */
     .foc-btn-home:hover {
       border-color: rgba(71, 191, 255, 0.4);
       box-shadow: 0 4px 32px rgba(71, 191, 255, 0.12), 0 0 0 1px rgba(71, 191, 255, 0.2);
@@ -849,7 +849,7 @@ document.querySelectorAll('.copy').forEach((button) => {
       color: #47bfff;
     }
 
-    /* Copy toggle active state */
+/* Copy toggle active state */
     .foc-btn-copy.active {
       border-color: rgba(52, 211, 153, 0.5);
       background: rgba(6, 78, 59, 0.6);
@@ -896,7 +896,7 @@ document.querySelectorAll('.copy').forEach((button) => {
       <span class="foc-btn-label">Home</span>
     </button>
 
-    <!-- Copy-Paste Toggle -->
+<!-- Copy-Paste Toggle -->
     <button class="foc-toolbar-btn foc-btn-copy foc-pulse" id="foc-btn-copy" title="Enable Copy & Paste">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
@@ -908,12 +908,12 @@ document.querySelectorAll('.copy').forEach((button) => {
 
   <script>
     (function() {
-      // Home button
+// Home button
       document.getElementById('foc-btn-home').addEventListener('click', function() {
         window.location.href = './index.html';
       });
 
-      // Copy-paste toggle
+// Copy-paste toggle
       var copyBtn = document.getElementById('foc-btn-copy');
       var isEnabled = false;
 
