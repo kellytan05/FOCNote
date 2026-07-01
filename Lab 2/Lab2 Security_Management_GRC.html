@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 2 - Security Management: Governance, Risk &amp; Compliance</title>
+<style>
+/* ============================================================
+   Refined Academic Press  -  shared theme for all lab manuals
+   (UECS 3423 Fundamentals of Cybersecurity)
+   Warm ivory paper, serif display headings, single deep-teal
+   accent, hairline-ruled tables, restrained scholarly callouts.
+   Self-contained: system fonts only, no external requests.
+   ============================================================ */
+:root {
+  --paper:#efe9dd;     /* page / desk background (warm sand) */
+  --card:#fdfbf6;      /* content surface (ivory)            */
+  --ink:#2b2722;       /* headings / strong text             */
+  --body:#403a31;      /* body text                          */
+  --muted:#7c7464;     /* secondary / captions               */
+  --rule:#ddd4c3;      /* hairline                           */
+  --rule-soft:#e8e1d2;
+  --accent:#0d6b5f;    /* deep teal (primary accent)         */
+  --accent-deep:#0a5046;
+  --accent-tint:#e7f0ec;
+  --green:#2f7a4d;     --green-tint:#e9f2e9;
+  --clay:#a05a23;      --clay-tint:#f5ecdc;   /* setup / fix  */
+  --red:#9c3a33;       --red-tint:#f6e7e2;    /* warning      */
+  --plum:#6a4a7a;      --plum-tint:#efe8f1;   /* practice     */
+  --code-bg:#f3eede;
+  --code-border:#e3dac7;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;
+  --sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Code","SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+  --measure:1060px;
+}
+
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body {
+  margin:0;
+  border-top:5px solid var(--accent);
+  background:var(--paper);
+  color:var(--body);
+  font-family:var(--sans);
+  font-size:1.0625rem;
+  line-height:1.7;
+  overflow-wrap:break-word;
+}
+::selection { background:var(--accent-tint); }
+
+.wrap, main { width:min(var(--measure), calc(100% - 2.5rem)); margin-inline:auto; }
+
+/* ---- Masthead ---------------------------------------------------- */
+header { background:var(--paper); padding:clamp(34px,6vw,58px) 0 clamp(20px,3vw,28px); }
+.eyebrow {
+  margin:0 0 .85rem; font-family:var(--sans); font-weight:700;
+  text-transform:uppercase; letter-spacing:.2em; font-size:.74rem; color:var(--accent);
+}
+h1 {
+  margin:0 0 .55rem; font-family:var(--serif); font-weight:600;
+  font-size:clamp(2.1rem,4.6vw,3.35rem); line-height:1.07; letter-spacing:-.012em; color:var(--ink);
+}
+.subtitle {
+  margin:0; max-width:64ch; font-family:var(--serif);
+  font-size:clamp(1.04rem,1.7vw,1.24rem); line-height:1.5; color:#5a5347;
+}
+
+/* ---- Content surface --------------------------------------------- */
+main {
+  background:var(--card);
+  border:1px solid var(--rule);
+  border-radius:10px;
+  padding:clamp(26px,4vw,46px) clamp(22px,4vw,48px) 64px;
+  box-shadow:0 16px 44px rgba(43,39,34,.08);
+  margin-bottom:2.6rem;
+}
+@media (prefers-reduced-motion:no-preference){
+  main { animation:rise .5s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
+}
+
+/* ---- Headings ---------------------------------------------------- */
+h2 {
+  position:relative; margin:2.7em 0 1em; padding-bottom:.34em;
+  font-family:var(--serif); font-weight:600; font-size:clamp(1.5rem,3vw,2rem);
+  line-height:1.2; color:var(--ink); border-bottom:1px solid var(--rule);
+}
+h2::after { content:""; position:absolute; left:0; bottom:-1px; width:2.4rem; height:2px; background:var(--accent); }
+h2:first-of-type { margin-top:1.2em; }
+h3 {
+  margin:1.9em 0 .55em; font-family:var(--serif); font-weight:600;
+  font-size:clamp(1.2rem,2vw,1.45rem); line-height:1.25; color:var(--accent-deep);
+}
+h4 { margin:1.5em 0 .5em; font-family:var(--sans); font-weight:700; font-size:1.02rem; color:var(--ink); }
+
+p { margin:.7rem 0; }
+strong, b { color:var(--ink); }
+a { color:var(--accent-deep); text-decoration:none; overflow-wrap:anywhere; }
+a:hover { color:var(--accent); text-decoration:underline; }
+ul, ol { padding-left:1.4rem; margin:.7rem 0; }
+li { margin:.32rem 0; }
+img { max-width:100%; height:auto; }
+hr { border:0; border-top:1px solid var(--rule); margin:2rem 0; }
+
+/* ---- Lead / intro ------------------------------------------------ */
+.intro {
+  margin:1.1rem 0 1.7rem; padding-bottom:1.2rem; border-bottom:1px solid var(--rule);
+  font-family:var(--serif); font-size:clamp(1.05rem,1.8vw,1.2rem); line-height:1.55; color:#5a5347;
+}
+.intro p { margin:.4rem 0; }
+
+/* ---- Table of contents ------------------------------------------- */
+nav {
+  margin:1.6rem 0 2.2rem; padding:1.05rem 1.3rem; background:#f7f2e7;
+  border:1px solid var(--rule); border-radius:8px;
+  columns:2; column-gap:2.4rem;
+}
+nav strong {
+  column-span:all; display:block; margin:0 0 .55rem; padding-bottom:.45rem;
+  font-family:var(--serif); font-weight:600; font-size:1.08rem; color:var(--ink);
+  border-bottom:1px solid var(--rule);
+}
+nav a { display:block; break-inside:avoid; padding:.2rem 0; font-size:.95rem; color:var(--accent-deep); }
+nav a:hover { color:var(--accent); }
+.toc-l2 { font-weight:600; }
+.toc-l3 { padding-left:1.1rem; color:var(--muted); font-size:.9rem; font-weight:400; }
+
+/* ---- Code -------------------------------------------------------- */
+code, pre, kbd { font-family:var(--mono); }
+code {
+  font-size:.9em; background:var(--code-bg); border:1px solid var(--code-border);
+  border-radius:4px; padding:.04em .35em; color:#3a352c; overflow-wrap:anywhere;
+}
+.codeblock { position:relative; margin:1rem 0 1.4rem; }
+pre {
+  margin:0; padding:2.6rem 1.05rem 1.05rem; overflow-x:auto;
+  background:var(--code-bg); border:1px solid var(--code-border); border-radius:8px;
+  white-space:pre-wrap; overflow-wrap:anywhere; tab-size:4;
+  font-size:.9rem; line-height:1.55; color:#352f27;
+}
+pre code { display:block; background:none; border:0; padding:0; font-size:inherit; color:inherit; }
+.copy {
+  position:absolute; top:8px; right:8px; cursor:pointer;
+  font-family:var(--sans); font-weight:600; font-size:.76rem; letter-spacing:.02em;
+  color:var(--accent-deep); background:var(--card);
+  border:1px solid var(--code-border); border-radius:6px; padding:.22rem .6rem;
+}
+.copy:hover { background:var(--accent-tint); border-color:#b9d6cd; }
+kbd {
+  font-size:.8rem; padding:.05rem .42rem; color:var(--ink);
+  background:#f4efe3; border:1px solid var(--rule); border-bottom-width:2px; border-radius:5px;
+}
+
+/* ---- Tables ------------------------------------------------------ */
+table { width:100%; border-collapse:collapse; margin:1.3rem 0 1.8rem; font-size:.97rem; }
+caption { caption-side:top; text-align:left; color:var(--muted); font-size:.9rem; padding-bottom:.4rem; }
+th, td { text-align:left; vertical-align:top; padding:.55rem .7rem; border-bottom:1px solid var(--rule-soft); overflow-wrap:break-word; }
+thead th { font-family:var(--sans); font-weight:700; color:var(--ink); border-bottom:2px solid var(--rule); background:#f4efe3; }
+tbody tr:nth-child(even) { background:rgba(43,39,34,.025); }
+.cia th, .cia td, .grc th, .grc td { text-align:center; }
+.cia td:first-child, .cia th:first-child, .cia td:last-child, .cia th:last-child,
+.grc td:first-child, .grc th:first-child, .grc td:last-child, .grc th:last-child { text-align:left; }
+.center { text-align:center; }
+.rubric td:first-child { font-weight:700; color:var(--ink); }
+
+/* ---- Fillable answer cells (auto-saved) --------------------------- */
+.practice td.fillable {
+  cursor:text; background:#fffdf7;
+  box-shadow:inset 0 -1px 0 var(--rule);
+  transition:background .12s ease;
+}
+.practice td.fillable:empty::before {
+  content:"type\2026"; color:#b6ad99; font-style:italic; font-size:.85em;
+}
+.practice td.fillable:hover { background:#fbf6ea; }
+.practice td.fillable:focus {
+  outline:2px solid var(--accent); outline-offset:-2px; background:#fff;
+}
+.practice td.fillable.has-text { background:#f3f8f2; }
+.save-note { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; }
+.btn-clear {
+  cursor:pointer; font-family:var(--sans); font-weight:600; font-size:.78rem;
+  color:var(--clay); background:var(--card);
+  border:1px solid var(--code-border); border-radius:6px; padding:.18rem .6rem;
+}
+.btn-clear:hover { background:var(--clay-tint); border-color:#e0c9a6; }
+
+/* ---- Callouts ---------------------------------------------------- */
+.box, .warning, .fix, .practice, .answer,
+.control, .evidence, .release, .question, .info, .checkpoint {
+  margin:1.4rem 0; padding:.9rem 1.15rem;
+  border:1px solid var(--rule); border-left:3px solid var(--accent);
+  border-radius:7px; background:#f7f2e7;
+}
+.box-title { margin-bottom:.3rem; font-family:var(--sans); font-weight:700; font-size:.96rem; color:var(--accent-deep); }
+.box > :last-child, .warning > :last-child, .fix > :last-child, .practice > :last-child,
+.answer > :last-child, .control > :last-child, .evidence > :last-child,
+.release > :last-child, .question > :last-child { margin-bottom:0; }
+
+.box, .info        { border-left-color:var(--accent); background:var(--accent-tint); }
+.warning           { border-left-color:var(--red);    background:var(--red-tint); }
+.fix, .release     { border-left-color:var(--clay);   background:var(--clay-tint); }
+.practice, .evidence { border-left-color:var(--plum); background:var(--plum-tint); }
+.answer, .control, .checkpoint { border-left-color:var(--green); background:var(--green-tint); }
+.question          { border-left-color:var(--accent); background:var(--accent-tint); }
+
+.info .box-title, .box .box-title, .question .box-title { color:var(--accent-deep); }
+.warning .box-title { color:var(--red); }
+.fix .box-title, .release .box-title { color:var(--clay); }
+.practice .box-title, .evidence .box-title { color:var(--plum); }
+.answer .box-title, .control .box-title, .checkpoint .box-title { color:var(--green); }
+
+/* ---- Answer reveal (Lab 1 / 2a) ---------------------------------- */
+.reveal {
+  margin:1.2rem 0 1.6rem; border:1px solid #cfe3d4; border-radius:7px;
+  background:var(--green-tint); overflow:hidden;
+}
+.reveal > summary {
+  list-style:none; cursor:pointer; user-select:none; display:flex; align-items:center; gap:.6rem;
+  padding:.72rem 1.05rem; font-family:var(--sans); font-weight:700; color:var(--green);
+}
+.reveal > summary::-webkit-details-marker { display:none; }
+.reveal > summary::before { content:"\25B8"; font-size:.8rem; transition:transform .15s ease; }
+.reveal[open] > summary::before { transform:rotate(90deg); }
+.reveal > summary:hover { background:#e1efe2; }
+.reveal .answer {
+  margin:0; border:0; border-top:1px solid #cfe3d4; border-radius:0; background:#f4f9f2;
+}
+
+/* ---- Tags / pills ------------------------------------------------ */
+.tag-row { display:flex; flex-wrap:wrap; gap:.5rem; margin:.8rem 0 1.1rem; }
+.tag {
+  display:inline-flex; align-items:center; font-family:var(--sans); font-weight:600; font-size:.82rem;
+  color:var(--accent-deep); background:var(--accent-tint);
+  border:1px solid #bcd8d0; border-radius:999px; padding:.22rem .72rem;
+}
+.status { display:inline-block; padding:.12rem .62rem; border-radius:999px; color:#fff; font-size:.78rem; font-weight:700; }
+.on { background:var(--green); }
+.off { background:var(--red); }
+.legend { display:flex; flex-wrap:wrap; gap:.5rem 1.2rem; margin:.7rem 0 1.1rem; font-size:.92rem; color:var(--muted); }
+.legend b { color:var(--ink); }
+.small { color:var(--muted); font-size:.92rem; }
+.qid { color:var(--plum); font-weight:700; }
+
+/* ---- Cards / grids / flow ---------------------------------------- */
+.card, .switch-card {
+  margin:.9rem 0; padding:1rem 1.15rem; background:#f9f5ea;
+  border:1px solid var(--rule); border-radius:8px;
+}
+.card strong { display:block; margin-bottom:.3rem; font-family:var(--sans); color:var(--ink); }
+.switch-card code { display:inline-block; margin-top:.25rem; }
+.grid, .grid-2, .control-panel {
+  display:grid; gap:1rem; margin:1.2rem 0 1.6rem;
+  grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+}
+.flow {
+  display:grid; gap:.7rem; margin:1.1rem 0 1.5rem;
+  grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
+}
+.flow div { padding:.75rem .85rem; background:#f9f5ea; border:1px solid var(--rule); border-radius:8px; min-height:84px; }
+.flow b { display:block; margin-bottom:.2rem; color:var(--ink); }
+
+/* ---- Mission (Lab 8) --------------------------------------------- */
+.mission {
+  margin:1.5rem 0; padding:1.05rem 1.25rem; background:#f9f5ea;
+  border:1px solid var(--rule); border-left:3px solid var(--accent); border-radius:8px;
+}
+.mission-title { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.6rem; margin-bottom:.4rem; }
+.mission-title h3 { margin:0; }
+
+/* ---- Numbered step list ------------------------------------------ */
+.steps { counter-reset:step; list-style:none; padding-left:0; margin:1rem 0 1.5rem; }
+.steps > li { position:relative; margin:.7rem 0; padding:.05rem 0 .05rem 2.6rem; }
+.steps > li::before {
+  counter-increment:step; content:counter(step); position:absolute; left:0; top:.05rem;
+  width:1.7rem; height:1.7rem; border-radius:50%; background:var(--accent); color:#fff;
+  font-family:var(--sans); font-weight:700; font-size:.85rem;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* ---- Images (Lab 2) ---------------------------------------------- */
+.lab-image {
+  display:block; max-width:100%; height:auto; margin:1.3rem auto;
+  border:1px solid var(--rule); border-radius:8px; box-shadow:0 8px 22px rgba(43,39,34,.1);
+}
+
+/* ---- Responsive -------------------------------------------------- */
+@media (max-width:760px) {
+  body { font-size:1rem; }
+  nav { columns:1; }
+  .grid, .grid-2, .control-panel, .flow { grid-template-columns:1fr; }
+}
+
+/* ---- Print ------------------------------------------------------- */
+@media print {
+  body { background:#fff; color:#000; border-top:none; }
+  header { padding:0 0 14px; }
+  main { margin:0; padding:0; border:none; border-radius:0; box-shadow:none; animation:none; }
+  .copy { display:none; }
+  nav { columns:2; background:none; }
+  .reveal, .codeblock, table, .card, .mission { break-inside:avoid; }
+  a { color:#000; text-decoration:none; }
+}
+
+/* ---- Colophon / footer ------------------------------------------ */
+.lab-footer { margin:0 0 3.5rem; }
+.lab-footer .wrap { display:flex; flex-wrap:wrap; align-items:center; gap:.3rem .9rem;
+  padding-top:1.3rem; border-top:1px solid var(--rule); color:var(--muted); font-size:.85rem; }
+.lab-footer .brand { font-family:var(--serif); font-weight:600; color:var(--ink); }
+.lab-footer .dot { color:var(--accent); }
+@media print { .lab-footer { display:none; } }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <p class="eyebrow">UECS 3423 · Fundamentals of Cybersecurity</p>
+  <h1>Lab 2a - Security Management</h1>
+  <p class="subtitle">Topic 2 practice lab: governance, risk, and compliance (GRC); laws, standards and frameworks; risk registers; business continuity (BCP/BIA); and security awareness &mdash; applied to the NeoBank Digital case study. Attempt each task first, then open the green box to check your answer.</p>
+</div></header>
+<main>
+<nav>
+  <strong>Contents</strong>
+  <a href="#overview">1 Overview</a>
+  <a href="#partA">2 Part A: Concept Warm-Up</a>
+  <a href="#partB">3 Part B: GRC Classification</a>
+  <a href="#partC">4 Part C: Laws, Standards &amp; Frameworks</a>
+  <a href="#partD">5 Part D: Risk Register</a>
+  <a href="#partE">6 Part E: BCP Tabletop</a>
+</nav>
+
+<section>
+  <div class="practice">
+    <div class="box-title">How to use this lab</div>
+    <p>Work through the parts in order. Each task asks you to recall, classify, assess, or design <strong>before</strong> you reveal the suggested answer. Answers are guidance, not a single correct script &mdash; in security management, a well-justified response often matters more than matching exact wording. Discuss your reasoning with a partner where prompted.</p>
+    <p class="small save-note">&#10003; You can type directly into the task tables below, and your answers are saved automatically in this browser &mdash; they will still be here if you close the page and reopen it on the same device.
+      <button type="button" class="btn-clear" id="clear-answers">Clear my answers</button></p>
+  </div>
+</section>
+
+<h2 id="overview">1 Overview</h2>
+<p>The objective of this lab is to practise the security-management ideas from Topic 2: why security is a business and governance problem (not only technical), the GRC model (Governance, Risk, Compliance), relevant laws/standards/frameworks, building a risk register with response options, and business continuity planning (BCP) supported by a business impact analysis (BIA).</p>
+<p>After completing this lab, you should be able to:</p>
+<ul>
+  <li>Explain why cybersecurity is a management and governance responsibility, not only a technical one.</li>
+  <li>Classify organisational actions as Governance, Risk, Compliance, or Awareness.</li>
+  <li>Match key laws, standards, and frameworks &mdash; including global privacy laws (GDPR, PDPA) and lawful bases for processing &mdash; to their main security or management implication.</li>
+  <li>Build a risk register, quantify risk with SLE/ALE, and choose appropriate risk responses (avoid, mitigate, transfer, accept, reject with evidence).</li>
+  <li>Run a BCP tabletop, reason about MTD/RTO/RPO and BIA, and identify the right continuity team.</li>
+  <li>Design a measurable security-awareness intervention and write a management-facing summary.</li>
+</ul>
+
+<!-- ===================== PART A ===================== -->
+<h2 id="partA">2 Part A: Concept Warm-Up</h2>
+<p>Answer each question in your own words first, then reveal the suggested answer. Compare with a partner.</p>
+
+<div class="card"><strong>A1.</strong> Why is cybersecurity <em>not only</em> a technical problem?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>Because management must decide ownership, funding, accountability, acceptable risk, legal duties, and continuity plans &mdash; decisions that technical controls alone cannot make.</p></div>
+</details>
+
+<div class="card"><strong>A2.</strong> Give one example of a <em>governance</em> decision.</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>Making the CISO report to the board, approving a security roadmap, or defining security metrics.</p></div>
+</details>
+
+<div class="card"><strong>A3.</strong> Give one example of a <em>compliance</em> obligation.</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>Protecting PII, keeping audit records, following PCI DSS for card payments, or meeting a legal requirement.</p></div>
+</details>
+
+<div class="card"><strong>A4.</strong> What is PII, and why is it difficult to recover after exposure?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>PII (personally identifiable information) is data that can identify a person, such as name, address, ID number, or account data. Once exposed it cannot easily be changed or recovered.</p></div>
+</details>
+
+<div class="card"><strong>A5.</strong> Why are employees often called the <em>weakest link</em> in security?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>Because phishing, mistakes, weak passwords, and poor reporting behaviour can bypass technical controls.</p></div>
+</details>
+
+<div class="card"><strong>A6.</strong> What is an <em>Authorization to Operate</em> (ATO), and what does management demonstrate by issuing one?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>An ATO is a formal management sign-off accepting the <strong>residual risk</strong> of a system before it goes live (&ldquo;no ATO = no launch&rdquo;). By issuing it, management demonstrates <strong>due care</strong> and takes accountability for the decision to operate &mdash; bridging technical security and business risk.</p></div>
+</details>
+
+<!-- ===================== PART B ===================== -->
+<h2 id="partB">3 Part B: GRC Classification</h2>
+<p>Classify each action as G, R, C, or A. More than one answer is allowed.</p>
+<div class="legend">
+  <span><b>G</b> = Governance</span>
+  <span><b>R</b> = Risk Management</span>
+  <span><b>C</b> = Compliance</span>
+  <span><b>A</b> = Awareness &amp; Training</span>
+</div>
+
+<p class="small"><strong>Metric used below &mdash; MTTR</strong> (<strong>Mean Time To Repair</strong>, also called Mean Time To Remediate/Recover): the average time taken to fix an issue from when it is detected until it is fully resolved. A lower MTTR means faster patching and less exposure time, so it is used as a performance-measurement metric. Related: <strong>MTTD</strong> = Mean Time To Detect; <strong>MTBF</strong> = Mean Time Between Failures.</p>
+
+<div class="practice">
+  <div class="box-title">Your task</div>
+  <table class="grc">
+    <thead><tr><th style="width:36%">Action</th><th>G</th><th>R</th><th>C</th><th>A</th><th style="width:30%">Your reason</th></tr></thead>
+    <tbody>
+      <tr><td>CISO reports security metrics to the board</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Customer PII handling is reviewed against policy</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Credential stuffing likelihood is estimated</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Staff receive phishing simulation feedback</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>ISO 27001 is added to the 3-year security roadmap</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Critical patch backlog is tracked by MTTR</td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <table class="grc">
+      <thead><tr><th style="width:32%">Action</th><th>G</th><th>R</th><th>C</th><th>A</th><th style="width:34%">Suggested reason</th></tr></thead>
+      <tbody>
+        <tr><td>CISO reports security metrics to the board</td><td>Yes</td><td>Possible</td><td>No</td><td>No</td><td>Board reporting creates oversight and accountability.</td></tr>
+        <tr><td>Customer PII handling is reviewed against policy</td><td>Possible</td><td>Possible</td><td>Yes</td><td>No</td><td>PII handling must meet policy and legal expectations.</td></tr>
+        <tr><td>Credential stuffing likelihood is estimated</td><td>No</td><td>Yes</td><td>No</td><td>No</td><td>This is threat and risk assessment.</td></tr>
+        <tr><td>Staff receive phishing simulation feedback</td><td>No</td><td>Possible</td><td>No</td><td>Yes</td><td>Training improves employee behaviour.</td></tr>
+        <tr><td>ISO 27001 is added to the 3-year security roadmap</td><td>Yes</td><td>Possible</td><td>Yes</td><td>No</td><td>ISO supports governance maturity and compliance evidence.</td></tr>
+        <tr><td>Critical patch backlog is tracked by MTTR</td><td>Yes</td><td>Yes</td><td>Possible</td><td>No</td><td>Metrics support governance and risk reduction.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<div class="card"><strong>Discussion.</strong> Why do governance, risk, and compliance often overlap in real organisations?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>In mature organisations GRC concepts are integrated rather than isolated &mdash; the same action (for example tracking patch MTTR or adopting ISO 27001) can serve oversight, reduce risk, and provide compliance evidence at the same time. A good answer identifies this overlap.</p></div>
+</details>
+
+<!-- ===================== PART C ===================== -->
+<h2 id="partC">4 Part C: Laws, Standards, and Frameworks</h2>
+<p>Match each item to its <strong>type</strong> (Law, Standard, or Framework) and its main security/management implication.</p>
+
+<div class="practice">
+  <div class="box-title">Your task</div>
+  <table>
+    <thead><tr><th style="width:22%">Item</th><th style="width:24%">Type</th><th>Main implication</th></tr></thead>
+    <tbody>
+      <tr><td>Privacy Act</td><td></td><td></td></tr>
+      <tr><td>FERPA</td><td></td><td></td></tr>
+      <tr><td>ECPA</td><td></td><td></td></tr>
+      <tr><td>COPPA</td><td></td><td></td></tr>
+      <tr><td>SOX</td><td></td><td></td></tr>
+      <tr><td>FISMA</td><td></td><td></td></tr>
+      <tr><td>DMCA</td><td></td><td></td></tr>
+      <tr><td>ESIGN</td><td></td><td></td></tr>
+      <tr><td>GDPR</td><td></td><td></td></tr>
+      <tr><td>PDPA (Malaysia)</td><td></td><td></td></tr>
+      <tr><td>NIST SP 800-53</td><td></td><td></td></tr>
+      <tr><td>PCI DSS</td><td></td><td></td></tr>
+      <tr><td>COBIT</td><td></td><td></td></tr>
+      <tr><td>ISO 27001</td><td></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <table>
+      <thead><tr><th style="width:22%">Item</th><th style="width:24%">Type</th><th>Main implication</th></tr></thead>
+      <tbody>
+        <tr><td>Privacy Act</td><td>Law</td><td>Protects personal data held by government agencies.</td></tr>
+        <tr><td>FERPA</td><td>Law</td><td>Protects student education records.</td></tr>
+        <tr><td>ECPA</td><td>Law</td><td>Regulates electronic communications and surveillance.</td></tr>
+        <tr><td>COPPA</td><td>Law</td><td>Protects online privacy of children under 13.</td></tr>
+        <tr><td>SOX</td><td>Law</td><td>Requires audit trails and corporate accountability.</td></tr>
+        <tr><td>FISMA</td><td>Law</td><td>Requires federal cybersecurity programs aligned with NIST.</td></tr>
+        <tr><td>DMCA</td><td>Law</td><td>Covers digital rights, anti-circumvention, and safe harbor.</td></tr>
+        <tr><td>ESIGN</td><td>Law</td><td>Gives legal validity to electronic signatures.</td></tr>
+        <tr><td>GDPR</td><td>Law (EU)</td><td>Strict, consent-based protection of EU residents' data; applies extraterritorially.</td></tr>
+        <tr><td>PDPA (Malaysia)</td><td>Law (Malaysia)</td><td>Governs processing of personal data in commercial transactions.</td></tr>
+        <tr><td>NIST SP 800-53</td><td>Standard / control catalog</td><td>Provides security and privacy controls.</td></tr>
+        <tr><td>PCI DSS</td><td>Standard</td><td>Protects cardholder data in payment environments.</td></tr>
+        <tr><td>COBIT</td><td>Framework</td><td>Supports IT governance and control objectives.</td></tr>
+        <tr><td>ISO 27001</td><td>Framework / standard</td><td>Supports auditable information security management.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<div class="card"><strong>Short question.</strong> An online financial platform stores customer PII and processes card payments. Which two items from the table are most relevant, and why?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p><strong>PCI DSS</strong> is relevant because the platform processes card payments. <strong>Privacy obligations</strong> (e.g. the Privacy Act or PDPA for customer PII) are relevant because it stores customer PII. ISO 27001 or COBIT may also be cited for management maturity and governance.</p></div>
+</details>
+
+<div class="box">
+  <div class="box-title">Global standard &mdash; lawful bases for processing personal data</div>
+  <p>Although the wording differs, most modern privacy regimes (EU&nbsp;GDPR, Malaysia&nbsp;PDPA, APEC) agree that personal data may only be processed when a <strong>lawful basis</strong> exists. The four most common are:</p>
+  <ul>
+    <li><strong>Informed consent</strong> &mdash; the individual actively agrees (GDPR requires explicit opt-in).</li>
+    <li><strong>Legal / contractual</strong> &mdash; processing is needed to fulfil a contract or legal duty (e.g. KYC checks).</li>
+    <li><strong>Vital interests</strong> &mdash; to protect someone's life (e.g. emergency medical access).</li>
+    <li><strong>Public interest</strong> &mdash; for the &ldquo;greater good&rdquo; (public health, research).</li>
+  </ul>
+</div>
+
+<div class="card"><strong>Cross-border question.</strong> NeoBank onboards customers in both Malaysia and the EU. Which laws apply, and what is the &ldquo;conflict of laws&rdquo; risk it must manage?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p><strong>PDPA</strong> applies to Malaysian customer data and <strong>GDPR</strong> applies to EU residents' data (GDPR reaches organisations outside the EU that serve EU residents). <strong>PCI DSS</strong> also applies because the platform processes card payments. The <em>conflict of laws</em> (&ldquo;Catch-22&rdquo;) risk: one jurisdiction may <strong>compel</strong> disclosure or data transfer that another jurisdiction <strong>forbids</strong> &mdash; so NeoBank can break one law no matter what it does. Mitigations: data localisation (keep EU data on EU servers), standard contractual clauses / approved transfer mechanisms, and legal review before cross-border transfers.</p></div>
+</details>
+
+<!-- ===================== PART D ===================== -->
+<h2 id="partD">5 Part D: Risk Register Exercise</h2>
+<div class="box">
+  <div class="box-title">Scenario &mdash; NeoBank Digital</div>
+  <p>NeoBank Digital is an online financial platform offering mobile banking, digital wallets, crypto rewards, and instant onboarding using KYC identity verification. A competitor recently suffered credential stuffing and was offline for 3 days. NeoBank's BCP has not been tested for more than 18 months.</p>
+</div>
+<p>Create a simple risk register. Use these response options:</p>
+<div class="legend">
+  <span><b>1</b> Avoid</span><span><b>2</b> Mitigate</span><span><b>3</b> Transfer</span><span><b>4</b> Accept</span><span><b>5</b> Reject with evidence</span>
+</div>
+
+<div class="box">
+  <div class="box-title">Reference &mdash; classifying threats and vulnerabilities</div>
+  <p>When filling the register, identify the <strong>threat source</strong> and the <strong>type of vulnerability</strong> it exploits.</p>
+  <p><strong>Four threat sources:</strong> Malicious human (hackers, fraudsters, insiders) &middot; Non-malicious human (honest mistakes, misdelivery) &middot; Natural (floods, fire, earthquake) &middot; Environmental / technical (power loss, hardware failure).</p>
+  <p><strong>Eight vulnerability areas:</strong> Physical structure &middot; Electrical / power &middot; Software &middot; Network &middot; Personnel &middot; Hardware &middot; Documentation &middot; Process.</p>
+</div>
+
+<div class="practice">
+  <div class="box-title">Your task</div>
+  <table>
+    <thead><tr><th>Asset</th><th>Threat</th><th>Vulnerability</th><th class="center">Likelihood</th><th class="center">Impact</th><th class="center">Priority</th><th>Response</th><th>Control or action</th></tr></thead>
+    <tbody>
+      <tr><td>Customer accounts</td><td>Credential stuffing</td><td>Weak MFA coverage</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Customer PII</td><td>Accidental exposure</td><td>Screenshots stored by support</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Payment environment</td><td>Compliance failure</td><td>Recent review not completed</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Onboarding service</td><td>Vendor outage</td><td>Third-party dependency</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Employees</td><td>Phishing</td><td>Low awareness and poor reporting</td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <table>
+      <thead><tr><th>Asset</th><th>Threat</th><th>Vulnerability</th><th class="center">Like.</th><th class="center">Impact</th><th class="center">Pri.</th><th>Response</th><th>Control or action</th></tr></thead>
+      <tbody>
+        <tr><td>Customer accounts</td><td>Credential stuffing</td><td>Weak MFA coverage</td><td class="center">High</td><td class="center">High</td><td class="center">P1</td><td>Mitigate</td><td>Enforce MFA and anomaly detection.</td></tr>
+        <tr><td>Customer PII</td><td>Accidental exposure</td><td>Screenshots stored by support</td><td class="center">Medium</td><td class="center">High</td><td class="center">P1/P2</td><td>Mitigate</td><td>Mask PII, restrict storage, train support staff.</td></tr>
+        <tr><td>Payment environment</td><td>Compliance failure</td><td>Recent review not completed</td><td class="center">Medium</td><td class="center">High</td><td class="center">P2</td><td>Mitigate</td><td>Conduct PCI DSS review and remediate gaps.</td></tr>
+        <tr><td>Onboarding service</td><td>Vendor outage</td><td>Third-party dependency</td><td class="center">Medium</td><td class="center">Med/High</td><td class="center">P2</td><td>Transfer / Mitigate</td><td>Add SLA, backup process, and continuity procedure.</td></tr>
+        <tr><td>Employees</td><td>Phishing</td><td>Low awareness and poor reporting</td><td class="center">High</td><td class="center">Med/High</td><td class="center">P1/P2</td><td>Mitigate</td><td>Targeted training and repeated simulations.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<div class="card"><strong>Discussion.</strong> Which risk should receive immediate treatment as P1? Justify using likelihood, impact, and business consequences.</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>Credential stuffing against customer accounts is a strong P1 candidate: high likelihood (a competitor was just hit) and high impact (direct financial and trust loss). PII exposure is also defensible as P1 if justified. The key skill is correctly separating asset, threat, vulnerability, impact, and response &mdash; the exact ratings need not match.</p></div>
+</details>
+
+<h3>Quantitative risk: putting a number on it</h3>
+<p>The register above is <em>qualitative</em> (High / Medium / P1). Management often also wants the <strong>&ldquo;math of risk&rdquo;</strong> &mdash; a money value and a frequency &mdash; so controls can be compared on a cost&ndash;benefit basis. Use these formulas:</p>
+<div class="legend">
+  <span><b>AV</b> Asset Value</span>
+  <span><b>EF</b> Exposure Factor (% of AV lost per event)</span>
+  <span><b>SLE</b> Single Loss Expectancy = AV &times; EF</span>
+  <span><b>ARO</b> Annualized Rate of Occurrence (events per year)</span>
+  <span><b>ALE</b> Annualized Loss Expectancy = ARO &times; SLE</span>
+</div>
+
+<div class="box">
+  <div class="box-title">Scenario &mdash; valuing the credential-stuffing risk</div>
+  <p>NeoBank estimates its <strong>customer-account database</strong> is worth <strong>RM&nbsp;2,000,000</strong> (AV). A successful credential-stuffing breach is estimated to destroy <strong>30%</strong> of that value per incident. At today's weak MFA coverage, threat intelligence suggests such a breach is likely to succeed about <strong>twice a year</strong>. A proposed control &mdash; enforced MFA plus anomaly detection &mdash; costs <strong>RM&nbsp;250,000 per year</strong> and is expected to cut the frequency to <strong>once every two years</strong>.</p>
+</div>
+
+<div class="practice">
+  <div class="box-title">Your task &mdash; compute the figures, then decide</div>
+  <table>
+    <thead><tr><th style="width:42%">Quantity</th><th>Your working</th><th class="center">Value (RM)</th></tr></thead>
+    <tbody>
+      <tr><td>Exposure Factor (EF)</td><td></td><td class="center"></td></tr>
+      <tr><td>Single Loss Expectancy (SLE)</td><td></td><td class="center"></td></tr>
+      <tr><td>ARO &mdash; before the control</td><td></td><td class="center"></td></tr>
+      <tr><td>ALE &mdash; before the control</td><td></td><td class="center"></td></tr>
+      <tr><td>ARO &mdash; after the control</td><td></td><td class="center"></td></tr>
+      <tr><td>ALE &mdash; after the control</td><td></td><td class="center"></td></tr>
+      <tr><td>Annual risk reduction (ALE saved)</td><td></td><td class="center"></td></tr>
+      <tr><td>Is the RM&nbsp;250,000 control justified?</td><td></td><td class="center"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <h4>Step 1 &mdash; loss from a single incident (same before and after)</h4>
+    <table>
+      <thead><tr><th style="width:42%">Quantity</th><th>Working</th><th class="center">Value (RM)</th></tr></thead>
+      <tbody>
+        <tr><td>Exposure Factor (EF)</td><td>30% of asset value lost per event</td><td class="center">0.30</td></tr>
+        <tr><td>Single Loss Expectancy (SLE)</td><td>AV &times; EF = 2,000,000 &times; 0.30</td><td class="center">600,000</td></tr>
+      </tbody>
+    </table>
+    <p class="small">The control changes how <em>often</em> a breach happens (ARO), not how much one breach costs (SLE) &mdash; so SLE is calculated once and reused below.</p>
+
+    <h4>Step 2 &mdash; before the control</h4>
+    <table>
+      <thead><tr><th style="width:42%">Quantity</th><th>Working</th><th class="center">Value (RM)</th></tr></thead>
+      <tbody>
+        <tr><td>ARO (frequency per year)</td><td>About twice a year</td><td class="center">2</td></tr>
+        <tr><td>ALE = ARO &times; SLE</td><td>2 &times; 600,000</td><td class="center">1,200,000</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Step 3 &mdash; after the control</h4>
+    <table>
+      <thead><tr><th style="width:42%">Quantity</th><th>Working</th><th class="center">Value (RM)</th></tr></thead>
+      <tbody>
+        <tr><td>ARO (frequency per year)</td><td>Once every two years = 1 &divide; 2</td><td class="center">0.5</td></tr>
+        <tr><td>ALE = ARO &times; SLE</td><td>0.5 &times; 600,000</td><td class="center">300,000</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Step 4 &mdash; decision: is the control worth it?</h4>
+    <table>
+      <thead><tr><th style="width:42%">Quantity</th><th>Working</th><th class="center">Value (RM)</th></tr></thead>
+      <tbody>
+        <tr><td>Annual risk reduction (ALE saved)</td><td>ALE before &minus; ALE after = 1,200,000 &minus; 300,000</td><td class="center">900,000</td></tr>
+        <tr><td>Cost of the control</td><td>Given</td><td class="center">250,000</td></tr>
+        <tr><td>Net annual benefit</td><td>900,000 &minus; 250,000</td><td class="center">650,000</td></tr>
+        <tr><td>Justified?</td><td>Benefit (900,000) &gt; cost (250,000)</td><td class="center">Yes</td></tr>
+      </tbody>
+    </table>
+    <p class="small">The control is clearly cost-justified: it removes about <strong>RM&nbsp;900,000</strong> of expected annual loss for <strong>RM&nbsp;250,000</strong>, a net annual benefit of roughly <strong>RM&nbsp;650,000</strong>. Remember the caveat from the lecture &mdash; ALE drives budgeting, but every figure is an <em>estimate</em> based on assumptions about frequency and loss, so document those assumptions and express them as ranges where possible.</p>
+  </div>
+</details>
+
+<!-- ===================== PART E ===================== -->
+<h2 id="partE">6 Part E: BCP Tabletop</h2>
+<div class="box">
+  <div class="box-title">Incident</div>
+  <p>NeoBank's identity verification provider is unavailable for 8 hours. New customers cannot complete onboarding. Existing customers can still log in and transfer money. A product launch is scheduled tomorrow.</p>
+</div>
+
+<div class="box">
+  <div class="box-title">Three recovery terms to know</div>
+  <ul>
+    <li><strong>MTD</strong> (Maximum Tolerable Downtime) &mdash; the longest a function can be down before the damage becomes fatal to the business.</li>
+    <li><strong>RTO</strong> (Recovery Time Objective) &mdash; the <em>target</em> time to restore the service. RTO must be shorter than MTD.</li>
+    <li><strong>RPO</strong> (Recovery Point Objective) &mdash; the maximum acceptable amount of <em>data loss</em>, measured in time (e.g. &ldquo;at most 5 minutes of transactions&rdquo;).</li>
+  </ul>
+  <p class="small"><strong>BCP vs DR:</strong> Business Continuity Planning keeps critical operations running <em>during</em> a disruption (the lifeboat); Disaster Recovery is the IT-focused subset that <em>restores</em> systems and data afterwards (toward the RTO and RPO).</p>
+</div>
+
+<p>Complete the BCP worksheet.</p>
+
+<div class="practice">
+  <div class="box-title">Your task</div>
+  <table>
+    <thead><tr><th style="width:42%">Question</th><th>Your answer</th></tr></thead>
+    <tbody>
+      <tr><td>Which business functions are affected?</td><td></td></tr>
+      <tr><td>Which function is most critical?</td><td></td></tr>
+      <tr><td>What is a reasonable MTD for onboarding?</td><td></td></tr>
+      <tr><td>What RTO would you set for onboarding, and why must it be shorter than the MTD?</td><td></td></tr>
+      <tr><td>What RPO is acceptable for existing-customer transaction data?</td><td></td></tr>
+      <tr><td>Who should join the BCP team?</td><td></td></tr>
+      <tr><td>What immediate continuity action should management take?</td><td></td></tr>
+      <tr><td>What should be tested or updated after recovery?</td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <table>
+      <thead><tr><th style="width:42%">Question</th><th>Suggested answer</th></tr></thead>
+      <tbody>
+        <tr><td>Which business functions are affected?</td><td>New onboarding, KYC verification, customer support, product launch planning.</td></tr>
+        <tr><td>Which function is most critical?</td><td>Existing customer transactions remain most critical; onboarding is important but may tolerate short downtime.</td></tr>
+        <tr><td>What is a reasonable MTD for onboarding?</td><td>Several hours to 1 day, depending on campaign commitments and regulatory requirements.</td></tr>
+        <tr><td>What RTO would you set for onboarding, and why must it be shorter than the MTD?</td><td>Set an RTO well inside the MTD (e.g. a 4-hour RTO against a 1-day MTD) so service is restored with a safety margin before fatal damage occurs; the MTD is the deadline, the RTO is the target.</td></tr>
+        <tr><td>What RPO is acceptable for existing-customer transaction data?</td><td>Near-zero &mdash; financial transactions tolerate almost no data loss, so an RPO of seconds to a few minutes (continuous replication) is appropriate.</td></tr>
+        <tr><td>Who should join the BCP team?</td><td>IT, Security, Legal/Compliance, Product, Customer Support, Business leadership, vendor owner.</td></tr>
+        <tr><td>What immediate continuity action should management take?</td><td>Pause or queue onboarding, communicate clearly, monitor existing services, and assess launch risk.</td></tr>
+        <tr><td>What should be tested or updated after recovery?</td><td>Vendor outage playbook, failover assumptions, BCP test schedule, communication plan, and BIA assumptions.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<div class="card"><strong>Short question.</strong> How can a security strategy support business growth while still reducing risk? Answer in 3&ndash;5 sentences.</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>A security strategy supports growth by making risk visible and manageable. Instead of blocking new products, security can define safe launch conditions, controls, metrics, and accountability. This lets management approve growth while reducing legal, operational, and reputational exposure.</p></div>
+</details>
+
+<p class="small">End of Lab 2a &mdash; Security Management: Governance, Risk &amp; Compliance (Topic 2).</p>
+
+</main>
+
+<script>
+document.querySelectorAll('.copy').forEach((button) => {
+  button.addEventListener('click', async () => {
+    const code = button.parentElement.querySelector('code');
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code.innerText);
+      const old = button.innerText;
+      button.innerText = 'Copied';
+      setTimeout(() => { button.innerText = old; }, 1100);
+    } catch (err) {
+      button.innerText = 'Select';
+    }
+  });
+});
+
+/* ---- Fillable, auto-saved task tables ---------------------------- */
+(function () {
+  const PREFIX = 'lab2a:v1|';
+
+  // Find the nearest preceding section heading for a stable, human-readable key.
+  function nearestHeading(node) {
+    let block = node.closest('.practice') || node;
+    let p = block;
+    while (p) {
+      let s = p.previousElementSibling;
+      while (s) {
+        if (/^H[1-4]$/.test(s.tagName)) return s.textContent.trim();
+        s = s.previousElementSibling;
+      }
+      p = p.parentElement;
+    }
+    return '';
+  }
+
+  function keyFor(cell) {
+    const table = cell.closest('table');
+    const row = cell.closest('tr');
+    const heading = nearestHeading(table);
+    const rowLabel = (row.cells[0] && row.cells[0].textContent.trim()) || '';
+    const headers = table.querySelectorAll('thead th');
+    const colHeader = (headers[cell.cellIndex] && headers[cell.cellIndex].textContent.trim()) || ('col' + cell.cellIndex);
+    return PREFIX + heading + '|' + rowLabel + '|' + colHeader + '|' + cell.cellIndex;
+  }
+
+  function markState(cell) {
+    cell.classList.toggle('has-text', cell.textContent.trim().length > 0);
+  }
+
+  const cells = [];
+  document.querySelectorAll('.practice table tbody td').forEach((cell) => {
+    // Only the empty answer cells become editable (label cells keep their text).
+    if (cell.textContent.trim() !== '') return;
+    cell.classList.add('fillable');
+    cell.setAttribute('contenteditable', 'true');
+    cell.setAttribute('spellcheck', 'true');
+    const key = keyFor(cell);
+    cell.dataset.key = key;
+    const saved = localStorage.getItem(key);
+    if (saved != null) cell.textContent = saved;
+    markState(cell);
+    cells.push(cell);
+  });
+
+  // Save on input (debounced lightly per cell).
+  document.addEventListener('input', (e) => {
+    const cell = e.target.closest && e.target.closest('.practice td.fillable');
+    if (!cell) return;
+    const val = cell.textContent.trim();
+    if (val) {
+      localStorage.setItem(cell.dataset.key, cell.textContent);
+    } else {
+      localStorage.removeItem(cell.dataset.key);
+      if (cell.innerHTML !== '') cell.innerHTML = ''; // restore the placeholder
+    }
+    markState(cell);
+  });
+
+  // Keep Enter inside a cell from doing anything surprising in narrow columns.
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      const cell = e.target.closest && e.target.closest('.practice td.fillable');
+      if (cell && cell.cellIndex >= 1 && cell.closest('.grc')) e.preventDefault();
+    }
+  });
+
+  // Clear-all button (two-click confirm, no blocking dialog).
+  const clearBtn = document.getElementById('clear-answers');
+  if (clearBtn) {
+    let armed = false, t;
+    clearBtn.addEventListener('click', () => {
+      if (!armed) {
+        armed = true;
+        clearBtn.textContent = 'Click again to confirm';
+        t = setTimeout(() => { armed = false; clearBtn.textContent = 'Clear my answers'; }, 3000);
+        return;
+      }
+      clearTimeout(t); armed = false;
+      cells.forEach((cell) => {
+        localStorage.removeItem(cell.dataset.key);
+        cell.textContent = '';
+        markState(cell);
+      });
+      clearBtn.textContent = 'Cleared';
+      setTimeout(() => { clearBtn.textContent = 'Clear my answers'; }, 1200);
+    });
+  }
+})();
+</script>
+</body>
+</html>
