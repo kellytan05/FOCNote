@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 1 - Fundamentals of Cybersecurity</title>
+<style>
+/* ============================================================
+   Refined Academic Press  -  shared theme for all lab manuals
+   (UECS 3423 Fundamentals of Cybersecurity)
+   Warm ivory paper, serif display headings, single deep-teal
+   accent, hairline-ruled tables, restrained scholarly callouts.
+   Self-contained: system fonts only, no external requests.
+   ============================================================ */
+:root {
+  --paper:#efe9dd;     /* page / desk background (warm sand) */
+  --card:#fdfbf6;      /* content surface (ivory)            */
+  --ink:#2b2722;       /* headings / strong text             */
+  --body:#403a31;      /* body text                          */
+  --muted:#7c7464;     /* secondary / captions               */
+  --rule:#ddd4c3;      /* hairline                           */
+  --rule-soft:#e8e1d2;
+  --accent:#0d6b5f;    /* deep teal (primary accent)         */
+  --accent-deep:#0a5046;
+  --accent-tint:#e7f0ec;
+  --green:#2f7a4d;     --green-tint:#e9f2e9;
+  --clay:#a05a23;      --clay-tint:#f5ecdc;   /* setup / fix  */
+  --red:#9c3a33;       --red-tint:#f6e7e2;    /* warning      */
+  --plum:#6a4a7a;      --plum-tint:#efe8f1;   /* practice     */
+  --code-bg:#f3eede;
+  --code-border:#e3dac7;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;
+  --sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Code","SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+  --measure:1060px;
+}
+
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body {
+  margin:0;
+  border-top:5px solid var(--accent);
+  background:var(--paper);
+  color:var(--body);
+  font-family:var(--sans);
+  font-size:1.0625rem;
+  line-height:1.7;
+  overflow-wrap:break-word;
+}
+::selection { background:var(--accent-tint); }
+
+.wrap, main { width:min(var(--measure), calc(100% - 2.5rem)); margin-inline:auto; }
+
+/* ---- Masthead ---------------------------------------------------- */
+header { background:var(--paper); padding:clamp(34px,6vw,58px) 0 clamp(20px,3vw,28px); }
+.eyebrow {
+  margin:0 0 .85rem; font-family:var(--sans); font-weight:700;
+  text-transform:uppercase; letter-spacing:.2em; font-size:.74rem; color:var(--accent);
+}
+h1 {
+  margin:0 0 .55rem; font-family:var(--serif); font-weight:600;
+  font-size:clamp(2.1rem,4.6vw,3.35rem); line-height:1.07; letter-spacing:-.012em; color:var(--ink);
+}
+.subtitle {
+  margin:0; max-width:64ch; font-family:var(--serif);
+  font-size:clamp(1.04rem,1.7vw,1.24rem); line-height:1.5; color:#5a5347;
+}
+
+/* ---- Content surface --------------------------------------------- */
+main {
+  background:var(--card);
+  border:1px solid var(--rule);
+  border-radius:10px;
+  padding:clamp(26px,4vw,46px) clamp(22px,4vw,48px) 64px;
+  box-shadow:0 16px 44px rgba(43,39,34,.08);
+  margin-bottom:2.6rem;
+}
+@media (prefers-reduced-motion:no-preference){
+  main { animation:rise .5s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
+}
+
+/* ---- Headings ---------------------------------------------------- */
+h2 {
+  position:relative; margin:2.7em 0 1em; padding-bottom:.34em;
+  font-family:var(--serif); font-weight:600; font-size:clamp(1.5rem,3vw,2rem);
+  line-height:1.2; color:var(--ink); border-bottom:1px solid var(--rule);
+}
+h2::after { content:""; position:absolute; left:0; bottom:-1px; width:2.4rem; height:2px; background:var(--accent); }
+h2:first-of-type { margin-top:1.2em; }
+h3 {
+  margin:1.9em 0 .55em; font-family:var(--serif); font-weight:600;
+  font-size:clamp(1.2rem,2vw,1.45rem); line-height:1.25; color:var(--accent-deep);
+}
+h4 { margin:1.5em 0 .5em; font-family:var(--sans); font-weight:700; font-size:1.02rem; color:var(--ink); }
+
+p { margin:.7rem 0; }
+strong, b { color:var(--ink); }
+a { color:var(--accent-deep); text-decoration:none; overflow-wrap:anywhere; }
+a:hover { color:var(--accent); text-decoration:underline; }
+ul, ol { padding-left:1.4rem; margin:.7rem 0; }
+li { margin:.32rem 0; }
+img { max-width:100%; height:auto; }
+hr { border:0; border-top:1px solid var(--rule); margin:2rem 0; }
+
+/* ---- Lead / intro ------------------------------------------------ */
+.intro {
+  margin:1.1rem 0 1.7rem; padding-bottom:1.2rem; border-bottom:1px solid var(--rule);
+  font-family:var(--serif); font-size:clamp(1.05rem,1.8vw,1.2rem); line-height:1.55; color:#5a5347;
+}
+.intro p { margin:.4rem 0; }
+
+/* ---- Table of contents ------------------------------------------- */
+nav {
+  margin:1.6rem 0 2.2rem; padding:1.05rem 1.3rem; background:#f7f2e7;
+  border:1px solid var(--rule); border-radius:8px;
+  columns:2; column-gap:2.4rem;
+}
+nav strong {
+  column-span:all; display:block; margin:0 0 .55rem; padding-bottom:.45rem;
+  font-family:var(--serif); font-weight:600; font-size:1.08rem; color:var(--ink);
+  border-bottom:1px solid var(--rule);
+}
+nav a { display:block; break-inside:avoid; padding:.2rem 0; font-size:.95rem; color:var(--accent-deep); }
+nav a:hover { color:var(--accent); }
+.toc-l2 { font-weight:600; }
+.toc-l3 { padding-left:1.1rem; color:var(--muted); font-size:.9rem; font-weight:400; }
+
+/* ---- Code -------------------------------------------------------- */
+code, pre, kbd { font-family:var(--mono); }
+code {
+  font-size:.9em; background:var(--code-bg); border:1px solid var(--code-border);
+  border-radius:4px; padding:.04em .35em; color:#3a352c; overflow-wrap:anywhere;
+}
+.codeblock { position:relative; margin:1rem 0 1.4rem; }
+pre {
+  margin:0; padding:2.6rem 1.05rem 1.05rem; overflow-x:auto;
+  background:var(--code-bg); border:1px solid var(--code-border); border-radius:8px;
+  white-space:pre-wrap; overflow-wrap:anywhere; tab-size:4;
+  font-size:.9rem; line-height:1.55; color:#352f27;
+}
+pre code { display:block; background:none; border:0; padding:0; font-size:inherit; color:inherit; }
+.copy {
+  position:absolute; top:8px; right:8px; cursor:pointer;
+  font-family:var(--sans); font-weight:600; font-size:.76rem; letter-spacing:.02em;
+  color:var(--accent-deep); background:var(--card);
+  border:1px solid var(--code-border); border-radius:6px; padding:.22rem .6rem;
+}
+.copy:hover { background:var(--accent-tint); border-color:#b9d6cd; }
+kbd {
+  font-size:.8rem; padding:.05rem .42rem; color:var(--ink);
+  background:#f4efe3; border:1px solid var(--rule); border-bottom-width:2px; border-radius:5px;
+}
+
+/* ---- Tables ------------------------------------------------------ */
+table { width:100%; border-collapse:collapse; margin:1.3rem 0 1.8rem; font-size:.97rem; }
+caption { caption-side:top; text-align:left; color:var(--muted); font-size:.9rem; padding-bottom:.4rem; }
+th, td { text-align:left; vertical-align:top; padding:.55rem .7rem; border-bottom:1px solid var(--rule-soft); overflow-wrap:anywhere; }
+thead th { font-family:var(--sans); font-weight:700; color:var(--ink); border-bottom:2px solid var(--rule); background:#f4efe3; }
+tbody tr:nth-child(even) { background:rgba(43,39,34,.025); }
+.cia th, .cia td, .grc th, .grc td { text-align:center; }
+.cia td:first-child, .cia th:first-child, .cia td:last-child, .cia th:last-child,
+.grc td:first-child, .grc th:first-child, .grc td:last-child, .grc th:last-child { text-align:left; }
+.center { text-align:center; }
+.rubric td:first-child { font-weight:700; color:var(--ink); }
+
+/* ---- Callouts ---------------------------------------------------- */
+.box, .warning, .fix, .practice, .answer,
+.control, .evidence, .release, .question, .info, .checkpoint {
+  margin:1.4rem 0; padding:.9rem 1.15rem;
+  border:1px solid var(--rule); border-left:3px solid var(--accent);
+  border-radius:7px; background:#f7f2e7;
+}
+.box-title { margin-bottom:.3rem; font-family:var(--sans); font-weight:700; font-size:.96rem; color:var(--accent-deep); }
+.box > :last-child, .warning > :last-child, .fix > :last-child, .practice > :last-child,
+.answer > :last-child, .control > :last-child, .evidence > :last-child,
+.release > :last-child, .question > :last-child { margin-bottom:0; }
+
+.box, .info        { border-left-color:var(--accent); background:var(--accent-tint); }
+.warning           { border-left-color:var(--red);    background:var(--red-tint); }
+.fix, .release     { border-left-color:var(--clay);   background:var(--clay-tint); }
+.practice, .evidence { border-left-color:var(--plum); background:var(--plum-tint); }
+.answer, .control, .checkpoint { border-left-color:var(--green); background:var(--green-tint); }
+.question          { border-left-color:var(--accent); background:var(--accent-tint); }
+
+.info .box-title, .box .box-title, .question .box-title { color:var(--accent-deep); }
+.warning .box-title { color:var(--red); }
+.fix .box-title, .release .box-title { color:var(--clay); }
+.practice .box-title, .evidence .box-title { color:var(--plum); }
+.answer .box-title, .control .box-title, .checkpoint .box-title { color:var(--green); }
+
+/* ---- Answer reveal (Lab 1 / 2a) ---------------------------------- */
+.reveal {
+  margin:1.2rem 0 1.6rem; border:1px solid #cfe3d4; border-radius:7px;
+  background:var(--green-tint); overflow:hidden;
+}
+.reveal > summary {
+  list-style:none; cursor:pointer; user-select:none; display:flex; align-items:center; gap:.6rem;
+  padding:.72rem 1.05rem; font-family:var(--sans); font-weight:700; color:var(--green);
+}
+.reveal > summary::-webkit-details-marker { display:none; }
+.reveal > summary::before { content:"\25B8"; font-size:.8rem; transition:transform .15s ease; }
+.reveal[open] > summary::before { transform:rotate(90deg); }
+.reveal > summary:hover { background:#e1efe2; }
+.reveal .answer {
+  margin:0; border:0; border-top:1px solid #cfe3d4; border-radius:0; background:#f4f9f2;
+}
+
+/* ---- Tags / pills ------------------------------------------------ */
+.tag-row { display:flex; flex-wrap:wrap; gap:.5rem; margin:.8rem 0 1.1rem; }
+.tag {
+  display:inline-flex; align-items:center; font-family:var(--sans); font-weight:600; font-size:.82rem;
+  color:var(--accent-deep); background:var(--accent-tint);
+  border:1px solid #bcd8d0; border-radius:999px; padding:.22rem .72rem;
+}
+.status { display:inline-block; padding:.12rem .62rem; border-radius:999px; color:#fff; font-size:.78rem; font-weight:700; }
+.on { background:var(--green); }
+.off { background:var(--red); }
+.legend { display:flex; flex-wrap:wrap; gap:.5rem 1.2rem; margin:.7rem 0 1.1rem; font-size:.92rem; color:var(--muted); }
+.legend b { color:var(--ink); }
+.small { color:var(--muted); font-size:.92rem; }
+.qid { color:var(--plum); font-weight:700; }
+
+/* ---- Cards / grids / flow ---------------------------------------- */
+.card, .switch-card {
+  margin:.9rem 0; padding:1rem 1.15rem; background:#f9f5ea;
+  border:1px solid var(--rule); border-radius:8px;
+}
+.card strong { display:block; margin-bottom:.3rem; font-family:var(--sans); color:var(--ink); }
+.switch-card code { display:inline-block; margin-top:.25rem; }
+.grid, .grid-2, .control-panel {
+  display:grid; gap:1rem; margin:1.2rem 0 1.6rem;
+  grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+}
+.flow {
+  display:grid; gap:.7rem; margin:1.1rem 0 1.5rem;
+  grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
+}
+.flow div { padding:.75rem .85rem; background:#f9f5ea; border:1px solid var(--rule); border-radius:8px; min-height:84px; }
+.flow b { display:block; margin-bottom:.2rem; color:var(--ink); }
+
+/* ---- Mission (Lab 8) --------------------------------------------- */
+.mission {
+  margin:1.5rem 0; padding:1.05rem 1.25rem; background:#f9f5ea;
+  border:1px solid var(--rule); border-left:3px solid var(--accent); border-radius:8px;
+}
+.mission-title { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.6rem; margin-bottom:.4rem; }
+.mission-title h3 { margin:0; }
+
+/* ---- Numbered step list ------------------------------------------ */
+.steps { counter-reset:step; list-style:none; padding-left:0; margin:1rem 0 1.5rem; }
+.steps > li { position:relative; margin:.7rem 0; padding:.05rem 0 .05rem 2.6rem; }
+.steps > li::before {
+  counter-increment:step; content:counter(step); position:absolute; left:0; top:.05rem;
+  width:1.7rem; height:1.7rem; border-radius:50%; background:var(--accent); color:#fff;
+  font-family:var(--sans); font-weight:700; font-size:.85rem;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* ---- Images (Lab 2) ---------------------------------------------- */
+.lab-image {
+  display:block; max-width:100%; height:auto; margin:1.3rem auto;
+  border:1px solid var(--rule); border-radius:8px; box-shadow:0 8px 22px rgba(43,39,34,.1);
+}
+
+/* ---- Responsive -------------------------------------------------- */
+@media (max-width:760px) {
+  body { font-size:1rem; }
+  nav { columns:1; }
+  .grid, .grid-2, .control-panel, .flow { grid-template-columns:1fr; }
+}
+
+/* ---- Print ------------------------------------------------------- */
+@media print {
+  body { background:#fff; color:#000; border-top:none; }
+  header { padding:0 0 14px; }
+  main { margin:0; padding:0; border:none; border-radius:0; box-shadow:none; animation:none; }
+  .copy { display:none; }
+  nav { columns:2; background:none; }
+  .reveal, .codeblock, table, .card, .mission { break-inside:avoid; }
+  a { color:#000; text-decoration:none; }
+}
+
+/* ---- Colophon / footer ------------------------------------------ */
+.lab-footer { margin:0 0 3.5rem; }
+.lab-footer .wrap { display:flex; flex-wrap:wrap; align-items:center; gap:.3rem .9rem;
+  padding-top:1.3rem; border-top:1px solid var(--rule); color:var(--muted); font-size:.85rem; }
+.lab-footer .brand { font-family:var(--serif); font-weight:600; color:var(--ink); }
+.lab-footer .dot { color:var(--accent); }
+@media print { .lab-footer { display:none; } }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <p class="eyebrow">UECS 3423 · Fundamentals of Cybersecurity</p>
+  <h1>Lab 1 - Fundamentals of Cybersecurity</h1>
+  <p class="subtitle">Topic 1 practice lab: security concepts, the CIA triad, risk and attack-surface analysis, and a hands-on vulnerable web application. Try each task first, then open the green box to check your answer.</p>
+</div></header>
+<main>
+<nav>
+  <strong>Contents</strong>
+  <a href="#overview">1 Overview</a>
+  <a href="#partA">2 Part A: Concept Warm-Up</a>
+  <a href="#partB">3 Part B: CIA Triad Classification</a>
+  <a href="#partB2">4 Part B: Log Analysis &amp; Incident Investigation</a>
+  <a href="#partC">5 Part C: Risk Ranking</a>
+  <a href="#partD">6 Part D: Attack Surface Mapping</a>
+  <a href="#partE">7 Part E: Asset-Type Mapping</a>
+  <a href="#partF">8 Part F: Attack Tree</a>
+  <a href="#partG">9 Part G: Vulnerable Web App</a>
+  <a href="#cleanup">10 Clean Up</a>
+</nav>
+
+<section>
+  <div class="practice">
+    <div class="box-title">How to use this lab</div>
+    <p>Work through the parts in order. Each task asks you to recall, classify, calculate, investigate, or design <strong>before</strong> you reveal the suggested answer. Resist opening the green boxes too early — the thinking is the point. Part G is hands-on and uses the vulnerable web application provided in this folder.</p>
+  </div>
+</section>
+
+<h2 id="overview">1 Overview</h2>
+<p>The objective of this lab is to practise the core ideas from Topic 1: what cybersecurity protects, the CIA triad (Confidentiality, Integrity, Availability), shared responsibility, risk ranking, attack-surface mapping, asset valuation, attack trees, and a first look at real web-application vulnerabilities.</p>
+<p>After completing this lab, you should be able to:</p>
+<ul>
+  <li>Explain what cybersecurity protects and why it is a shared responsibility.</li>
+  <li>Classify security incidents against the CIA triad and justify each decision.</li>
+  <li>Investigate system logs and identify suspicious activity such as impossible travel.</li>
+  <li>Calculate and rank risk using likelihood and impact, and explain why likelihood alone is not priority.</li>
+  <li>Map network, software, and human attack surfaces and propose matching controls.</li>
+  <li>Identify asset types (data, software/service, people) and explain their value.</li>
+  <li>Build a simple attack tree with prevention and detection points.</li>
+  <li>Demonstrate and then patch SQL injection, data exposure, privilege abuse, and weak session-cookie vulnerabilities in a live web app.</li>
+</ul>
+
+<!-- ===================== PART A ===================== -->
+<h2 id="partA">2 Part A: Concept Warm-Up</h2>
+<p>Answer each question in your own words first, then reveal the suggested answer to compare.</p>
+
+<div class="card"><strong>A1.</strong> What does cybersecurity protect?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>Cybersecurity protects systems, networks, data, services, applications, devices, and people from unauthorized access, misuse, disruption, or damage.</p></div>
+</details>
+
+<div class="card"><strong>A2.</strong> Give examples of a <em>confidentiality</em> breach.</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>Leaked passwords, exposed student records, or stolen credit-card data.</p></div>
+</details>
+
+<div class="card"><strong>A3.</strong> Give examples of an <em>integrity</em> breach.</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>An attacker changes exam marks, modifies a bank-transfer amount, or changes a delivery address.</p></div>
+</details>
+
+<div class="card"><strong>A4.</strong> Give examples of an <em>availability</em> breach.</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>A DDoS attack, ransomware encryption, or a portal outage during registration.</p></div>
+</details>
+
+<div class="card"><strong>A5.</strong> Why is cybersecurity a <em>shared</em> responsibility?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>Because users, developers, administrators, managers, and vendors can all create or reduce risk.</p></div>
+</details>
+
+<!-- ===================== PART B ===================== -->
+<h2 id="partB">3 Part B: CIA Triad Classification</h2>
+<p>For each incident, decide which CIA components are affected. Fill in the table below (Yes / No / Possible) and write a short reason, then reveal the answer.</p>
+
+<div class="practice">
+  <div class="box-title">Your task</div>
+  <table class="cia">
+    <thead><tr><th style="width:34%">Incident</th><th>C</th><th>I</th><th>A</th><th style="width:34%">Your reason</th></tr></thead>
+    <tbody>
+      <tr><td>Customer database leaked online</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Attacker changes exam marks</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>University portal down during registration</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Fake login page steals student passwords</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Ransomware encrypts hospital files</td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <table class="cia">
+      <thead><tr><th style="width:30%">Incident</th><th>C</th><th>I</th><th>A</th><th style="width:38%">Suggested reason</th></tr></thead>
+      <tbody>
+        <tr><td>Customer database leaked online</td><td>Yes</td><td>No</td><td>No</td><td>Private data is exposed to unauthorized parties.</td></tr>
+        <tr><td>Attacker changes exam marks</td><td>No</td><td>Yes</td><td>No</td><td>Academic records are modified without authorization.</td></tr>
+        <tr><td>University portal down during registration</td><td>No</td><td>No</td><td>Yes</td><td>Legitimate users cannot access the system when needed.</td></tr>
+        <tr><td>Fake login page steals student passwords</td><td>Yes</td><td>Possible</td><td>No</td><td>Credentials are exposed; integrity may be affected later if accounts are misused.</td></tr>
+        <tr><td>Ransomware encrypts hospital files</td><td>Yes</td><td>No</td><td>No</td><td>Private data is exposed to unauthorized parties.</td></tr>
+      </tbody>
+    </table>
+    <p class="small">Note: ransomware in practice also impacts availability (files are locked); for this exercise the key point is recognising more than one CIA component can be involved.</p>
+  </div>
+</details>
+
+<!-- ===================== PART B (Log analysis) ===================== -->
+<h2 id="partB2">4 Part B: Log Analysis &amp; Incident Investigation</h2>
+<p>Consider the following system logs and answer questions (a)&ndash;(d).</p>
+
+<table>
+  <thead><tr><th>Time</th><th>User</th><th>Country</th><th>Action</th></tr></thead>
+  <tbody>
+    <tr><td>09:00</td><td>lecturer01</td><td>Malaysia</td><td>Login</td></tr>
+    <tr><td>09:03</td><td>lecturer01</td><td>Brazil</td><td>Login</td></tr>
+    <tr><td>09:05</td><td>lecturer01</td><td>Brazil</td><td>Export Student Data</td></tr>
+    <tr><td>09:08</td><td>lecturer01</td><td>Brazil</td><td>Change Marks</td></tr>
+  </tbody>
+</table>
+
+<div class="card"><strong>(a)</strong> Identify and explain all suspicious activities in the log.</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>A login from Malaysia followed by a login from Brazil within 3 minutes is physically unrealistic (impossible travel), strongly suggesting the account is compromised. The subsequent <em>Export Student Data</em> and <em>Change Marks</em> actions from Brazil are sensitive, privileged operations performed from the suspicious location.</p></div>
+</details>
+
+<div class="card"><strong>(b)</strong> Which CIA principles are violated by each suspicious activity?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p><strong>Export Student Data</strong> &rarr; Confidentiality. <strong>Change Marks</strong> &rarr; Integrity.</p></div>
+</details>
+
+<div class="card"><strong>(c)</strong> What security alerts or detection mechanisms should have been triggered?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <ul>
+      <li><strong>Impossible Travel Alert</strong> &ndash; logins from geographically distant locations within an unrealistic time period.</li>
+      <li><strong>Account Compromise Alert</strong> &ndash; multiple logins from different countries in a short time.</li>
+      <li><strong>Sensitive Data Export Alert</strong> &ndash; large export of student records.</li>
+      <li><strong>Privileged Action Alert</strong> &ndash; modification of student marks.</li>
+    </ul>
+  </div>
+</details>
+
+<div class="card"><strong>(d)</strong> What should the incident response team do first?</div>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>Disable the account immediately to stop further damage.</p></div>
+</details>
+
+<!-- ===================== PART C ===================== -->
+<h2 id="partC">5 Part C: Risk Ranking</h2>
+<p>Risk score = Likelihood &times; Impact (each rated 1&ndash;5). Complete the table: (a) calculate each risk score, and (b) rank the threats (1 = highest risk, 4 = lowest).</p>
+
+<div class="practice">
+  <div class="box-title">Your task</div>
+  <table>
+    <thead><tr><th>Threat</th><th class="center">Likelihood</th><th class="center">Impact</th><th class="center">Risk Score</th><th class="center">Priority</th></tr></thead>
+    <tbody>
+      <tr><td>Phishing email to students</td><td class="center">5</td><td class="center">4</td><td></td><td></td></tr>
+      <tr><td>DDoS</td><td class="center">3</td><td class="center">3</td><td></td><td></td></tr>
+      <tr><td>SQL injection in student portal</td><td class="center">2</td><td class="center">5</td><td></td><td></td></tr>
+      <tr><td>Lost lecturer laptop</td><td class="center">4</td><td class="center">3</td><td></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <table>
+      <thead><tr><th>Threat</th><th class="center">Likelihood</th><th class="center">Impact</th><th class="center">Risk Score</th><th class="center">Priority</th></tr></thead>
+      <tbody>
+        <tr><td>Phishing email to students</td><td class="center">5</td><td class="center">4</td><td class="center">20</td><td class="center">1</td></tr>
+        <tr><td>Lost lecturer laptop</td><td class="center">4</td><td class="center">3</td><td class="center">12</td><td class="center">2</td></tr>
+        <tr><td>SQL injection in student portal</td><td class="center">2</td><td class="center">5</td><td class="center">10</td><td class="center">3</td></tr>
+        <tr><td>DDoS</td><td class="center">3</td><td class="center">3</td><td class="center">9</td><td class="center">4</td></tr>
+      </tbody>
+    </table>
+    <p><strong>(c) Why does highest likelihood not always mean highest priority?</strong> A low-likelihood threat may still deserve priority if the impact is catastrophic. For example, SQL injection has low likelihood here but could compromise the entire database.</p>
+  </div>
+</details>
+
+<!-- ===================== PART D ===================== -->
+<h2 id="partD">6 Part D: Attack Surface Mapping</h2>
+<p>Three attack surfaces and their example items / controls are listed below. Match each surface to the correct group number (1, 2, or 3).</p>
+
+<div class="grid-2">
+  <div class="card"><strong>Group 1</strong>Login form, upload function, admin dashboard, APIs, outdated plugins.</div>
+  <div class="card"><strong>Group 2</strong>Open ports, Wi-Fi, VPN, server exposure, cloud endpoints.</div>
+  <div class="card"><strong>Group 3</strong>Phishing, weak passwords, password reuse, shared accounts, careless admin behavior.</div>
+</div>
+
+<div class="practice">
+  <div class="box-title">Your task &mdash; match the surface to a group (1&ndash;3)</div>
+  <table>
+    <thead><tr><th>Question</th><th class="center">Your answer</th></tr></thead>
+    <tbody>
+      <tr><td>Network attack surface</td><td></td></tr>
+      <tr><td>Software attack surface</td><td></td></tr>
+      <tr><td>Human attack surface</td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <table>
+      <thead><tr><th>Question</th><th class="center">Answer</th></tr></thead>
+      <tbody>
+        <tr><td>Network attack surface</td><td class="center">2</td></tr>
+        <tr><td>Software attack surface</td><td class="center">1</td></tr>
+        <tr><td>Human attack surface</td><td class="center">3</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<p>Now match each <em>control group</em> to the surface it reduces.</p>
+<div class="grid-2">
+  <div class="card"><strong>Group 4</strong>Patch systems, secure upload validation, input validation, least privilege.</div>
+  <div class="card"><strong>Group 5</strong>MFA, awareness training, password manager, reporting process.</div>
+  <div class="card"><strong>Group 6</strong>Close unused ports, require VPN, firewall rules, network segmentation.</div>
+</div>
+
+<div class="practice">
+  <div class="box-title">Your task &mdash; match the control to a group (4&ndash;6)</div>
+  <table>
+    <thead><tr><th>Question</th><th class="center">Your answer</th></tr></thead>
+    <tbody>
+      <tr><td>Control to reduce network surface</td><td></td></tr>
+      <tr><td>Control to reduce software surface</td><td></td></tr>
+      <tr><td>Control to reduce human surface</td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <table>
+      <thead><tr><th>Question</th><th class="center">Answer</th></tr></thead>
+      <tbody>
+        <tr><td>Control to reduce network surface</td><td class="center">6</td></tr>
+        <tr><td>Control to reduce software surface</td><td class="center">4</td></tr>
+        <tr><td>Control to reduce human surface</td><td class="center">5</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<!-- ===================== PART E ===================== -->
+<h2 id="partE">7 Part E: Asset-Type Mapping</h2>
+<p>Identify the type of each asset &mdash; <strong>Data</strong>, <strong>Software/service</strong>, or <strong>People</strong> &mdash; and explain why it is valuable and needs protection.</p>
+
+<div class="practice">
+  <div class="box-title">Your task</div>
+  <table>
+    <thead><tr><th style="width:28%">Asset</th><th style="width:24%">Type</th><th>Why valuable?</th></tr></thead>
+    <tbody>
+      <tr><td>Student records</td><td></td><td></td></tr>
+      <tr><td>Staff credentials</td><td></td><td></td></tr>
+      <tr><td>Learning portal</td><td></td><td></td></tr>
+      <tr><td>Assessment marks</td><td></td><td></td></tr>
+      <tr><td>Students and staff</td><td></td><td></td></tr>
+      <tr><td>Admin dashboard</td><td></td><td></td></tr>
+      <tr><td>Email system</td><td></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <table>
+      <thead><tr><th style="width:28%">Asset</th><th style="width:24%">Type</th><th>Why valuable?</th></tr></thead>
+      <tbody>
+        <tr><td>Student records</td><td>Data</td><td>Contains personal and academic information.</td></tr>
+        <tr><td>Staff credentials</td><td>Data</td><td>Can unlock privileged access.</td></tr>
+        <tr><td>Learning portal</td><td>Software/service</td><td>Core teaching and learning operation.</td></tr>
+        <tr><td>Assessment marks</td><td>Data</td><td>Important for academic integrity.</td></tr>
+        <tr><td>Students and staff</td><td>People</td><td>Targets for social engineering and account misuse.</td></tr>
+        <tr><td>Admin dashboard</td><td>Software/service</td><td>Provides access to sensitive management functions.</td></tr>
+        <tr><td>Email system</td><td>Software/service</td><td>Used as the phishing delivery path.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<!-- ===================== PART F ===================== -->
+<h2 id="partF">8 Part F: Attack Tree</h2>
+<p><strong>Goal:</strong> Compromise student records.</p>
+<p>Create a simple attack tree that includes at least: one attacker goal, three major attack steps, two prevention points, and two detection points. Use the template below.</p>
+
+<div class="practice">
+  <div class="box-title">Template &mdash; fill in the blanks</div>
+  <div class="codeblock"><button class="copy" type="button">Copy</button>
+<pre><code>Compromise student records
+|
++-- Step 1:
+|   |
+|   +-- Method:
+|   +-- Prevention:
+|   +-- Detection:
+|
++-- Step 2:
+|   |
+|   +-- Method:
+|   +-- Prevention:
+|   +-- Detection:
+|
++-- Step 3:
+    |
+    +-- Method:
+    +-- Prevention:
+    +-- Detection:</code></pre></div>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+<pre><code>Compromise student records
+|
++-- Steal staff credentials
+|   |
+|   +-- Send phishing email
+|   +-- Create fake login page
+|   +-- Capture username and password
+|   +-- Prevention: email filtering, user training, MFA
+|   +-- Detection: phishing reports, suspicious domain monitoring
+|
++-- Access learning portal
+|   |
+|   +-- Use stolen staff account
+|   +-- Bypass weak login controls
+|   +-- Find admin dashboard
+|   +-- Prevention: MFA, least privilege, conditional access
+|   +-- Detection: impossible travel alert, unusual login alert
+|
++-- Download records or change marks
+    |
+    +-- Export student data
+    +-- Modify assessment marks
+    +-- Prevention: role-based permissions, export approval
+    +-- Detection: audit logs, abnormal download volume alert, mark-change alert</code></pre>
+  </div>
+</details>
+
+<!-- ===================== PART G ===================== -->
+<h2 id="partG">9 Part G: Vulnerabilities and Security Measure Practice</h2>
+<p>This part is hands-on. You are provided with a deliberately vulnerable web application (a Campus User Portal) in the <code>Lab1_Practice</code> folder. You will exploit four weaknesses, then patch them and verify the fixes.</p>
+
+<div class="warning">
+  <div class="box-title">Authorized practice only</div>
+  <p>The techniques below are for this local, self-contained lab app only. Never run them against systems you do not own or are not explicitly authorized to test.</p>
+</div>
+
+<h3>Lab Setup</h3>
+<ol class="steps">
+  <li>Open <strong>PowerShell</strong>.</li>
+  <li>Navigate to the <code>Lab1_Practice</code> directory:
+    <div class="codeblock"><button class="copy" type="button">Copy</button>
+<pre><code>cd path\to\Lab1_Practice</code></pre></div>
+    The prompt should end with <code>...\Lab1_Practice&gt;</code>.</li>
+  <li>Start the web application:
+    <div class="codeblock"><button class="copy" type="button">Copy</button>
+<pre><code>.\start_lab.ps1</code></pre></div>
+    Wait until initialization finishes.</li>
+  <li>Open a browser and visit:
+    <div class="codeblock"><button class="copy" type="button">Copy</button>
+<pre><code>http://localhost:8090</code></pre></div>
+    If it started successfully, the login page is displayed.</li>
+</ol>
+
+<div class="fix">
+  <div class="box-title">If PowerShell blocks the script (execution policy)</div>
+  <p>Run this in the current PowerShell session, then rerun the script:</p>
+  <div class="codeblock"><button class="copy" type="button">Copy</button>
+<pre><code>Set-ExecutionPolicy -Scope Process Bypass</code></pre></div>
+</div>
+
+<h3>Question 1: Authentication Testing</h3>
+<p>Test the login page using normal credentials and SQL-injection-style input.</p>
+<div class="box">
+  <div class="box-title">Hint &mdash; try these</div>
+  <div class="tag-row">
+    <span class="tag">alice / alice123</span>
+    <span class="tag">ben / ben123</span>
+    <span class="tag">' OR '1'='1</span>
+  </div>
+</div>
+<p><strong>(a)</strong> What vulnerability exists in the login function?</p>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>The login function is vulnerable to <strong>SQL injection / authentication bypass</strong> because unsafe input can log in without a valid password.</p></div>
+</details>
+
+<h3>Question 2: User Data Exposure</h3>
+<p>After logging in as a normal user, observe the user table.</p>
+<p><strong>(a)</strong> What sensitive data is exposed? <strong>(b)</strong> Why is this dangerous?</p>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <p><strong>(a)</strong> Plaintext passwords and other users' records are exposed.</p>
+    <p><strong>(b)</strong> A normal user can discover the admin password and escalate privileges.</p>
+  </div>
+</details>
+
+<h3>Question 3: Admin Privilege Abuse</h3>
+<p>Use the exposed admin credential to log in as admin.</p>
+<p><strong>(a)</strong> What actions can the admin perform? <strong>(b)</strong> Which CIA component is affected if an attacker gains admin access?</p>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <p><strong>(a)</strong> The admin can edit and delete user records.</p>
+    <p><strong>(b)</strong> Integrity is affected because records can be modified or deleted. Confidentiality is also affected because the admin can view user data.</p>
+  </div>
+</details>
+
+<h3>Question 4: Cookie Security</h3>
+<p>Demonstrate session hijacking by copying a valid session cookie into another browser session.</p>
+<ol class="steps">
+  <li>Log in using the <strong>admin</strong> account.</li>
+  <li>Open Developer Tools with <kbd>F12</kbd> and go to <code>Application &rarr; Storage &rarr; Cookies &rarr; http://localhost:8090</code>.</li>
+  <li>Locate the cookie named <code>sid</code> and copy its value.</li>
+  <li>Open a new <strong>Incognito / Private</strong> window and visit <code>http://localhost:8090</code>.</li>
+  <li>Open Developer Tools (<kbd>F12</kbd>) and switch to the <strong>Console</strong> tab. Enter (replace <code>PASTE_VALUE_HERE</code> with the copied value):
+    <div class="codeblock"><button class="copy" type="button">Copy</button>
+<pre><code>document.cookie = "sid=PASTE_VALUE_HERE; Path=/";</code></pre></div>
+  </li>
+  <li>Refresh the page:
+    <div class="codeblock"><button class="copy" type="button">Copy</button>
+<pre><code>location.reload();</code></pre></div>
+  </li>
+</ol>
+<p><strong>What result do you see?</strong></p>
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer"><p>The browser may gain access to the existing authenticated session without requiring a login. This demonstrates the risk of <strong>session hijacking</strong> when session identifiers are exposed or stolen. An attacker who obtains a valid session cookie may be able to impersonate a legitimate user and access protected resources without knowing the user's password.</p></div>
+</details>
+
+<h3>Question 5: Security Patch and Verification</h3>
+<p>Follow the instructions in <code>STUDENT_PATCH_WORKSHEET.md</code> to patch <code>server.cjs</code> based on the vulnerabilities identified in Questions 1&ndash;4. The worksheet covers five patches: prepared-statement-style login, hashing passwords (and hiding them from normal users), restricting normal users to their own data, and protecting the login/logout cookies with <code>HttpOnly</code> and <code>SameSite</code>.</p>
+
+<div class="box">
+  <div class="box-title">After patching, test the app again and answer:</div>
+  <ol>
+    <li>Which parts of the code did you modify?</li>
+    <li>Which vulnerabilities were fixed by your patch?</li>
+    <li>How did you verify that SQL-injection login no longer works?</li>
+    <li>How did you verify that plaintext passwords are no longer exposed?</li>
+    <li>How did you verify that the <code>sid</code> cookie is protected with <code>HttpOnly</code>?</li>
+  </ol>
+</div>
+
+<details class="reveal"><summary>Show suggested answer</summary>
+  <div class="answer">
+    <ol>
+      <li>Modified the functions in the <strong>STUDENT PATCH AREA</strong> of <code>server.cjs</code>.</li>
+      <li>Fixed authentication bypass, plaintext password exposure, excessive user data exposure, and weak cookie protection.</li>
+      <li>Retested the login form using <code>' OR '1'='1</code>; login was rejected.</li>
+      <li>Logged in and checked the user table; plaintext passwords were no longer shown. Admin could only see password hashes.</li>
+      <li>Checked <code>F12 &rarr; Application &rarr; Cookies</code>; the <code>sid</code> cookie had <code>HttpOnly</code> enabled. Also, <code>document.cookie</code> no longer displayed <code>sid</code>.</li>
+    </ol>
+  </div>
+</details>
+
+<!-- ===================== CLEAN UP ===================== -->
+<h2 id="cleanup">10 Clean Up</h2>
+<p>When you have finished:</p>
+<ul>
+  <li>Stop the web application in the PowerShell window (press <kbd>Ctrl</kbd>+<kbd>C</kbd>).</li>
+  <li>Close any Incognito / Private windows used for the session-hijacking test.</li>
+  <li>If you applied the patches, keep your modified <code>server.cjs</code> for submission, or restore the original if your instructor asks you to start fresh.</li>
+</ul>
+
+<p class="small">End of Lab 1 &mdash; Fundamentals of Cybersecurity (Topic 1).</p>
+
+</main>
+
+<script>
+document.querySelectorAll('.copy').forEach((button) => {
+  button.addEventListener('click', async () => {
+    const code = button.parentElement.querySelector('code');
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code.innerText);
+      const old = button.innerText;
+      button.innerText = 'Copied';
+      setTimeout(() => { button.innerText = old; }, 1100);
+    } catch (err) {
+      button.innerText = 'Select';
+    }
+  });
+});
+</script>
+
+  <!-- Floating Toolbar: Home + Copy-Paste Toggle -->
+  <style>
+    .foc-toolbar {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .foc-toolbar-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .foc-toolbar-btn:hover {
+      width: auto;
+      padding: 0 16px;
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(134, 59, 255, 0.4);
+      color: #e2e8f0;
+      box-shadow: 0 4px 32px rgba(134, 59, 255, 0.15), 0 0 0 1px rgba(134, 59, 255, 0.2);
+      transform: translateX(-2px);
+    }
+
+    .foc-toolbar-btn:active {
+      transform: scale(0.96) translateX(-2px);
+    }
+
+    .foc-toolbar-btn .foc-btn-label {
+      display: none;
+    }
+
+    .foc-toolbar-btn:hover .foc-btn-label {
+      display: inline;
+    }
+
+    .foc-toolbar-btn svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+/* Home button specific */
+    .foc-btn-home:hover {
+      border-color: rgba(71, 191, 255, 0.4);
+      box-shadow: 0 4px 32px rgba(71, 191, 255, 0.12), 0 0 0 1px rgba(71, 191, 255, 0.2);
+    }
+
+    .foc-btn-home:hover svg {
+      color: #47bfff;
+    }
+
+/* Copy toggle active state */
+    .foc-btn-copy.active {
+      border-color: rgba(52, 211, 153, 0.5);
+      background: rgba(6, 78, 59, 0.6);
+      color: #6ee7b7;
+      box-shadow: 0 4px 32px rgba(52, 211, 153, 0.15), 0 0 0 1px rgba(52, 211, 153, 0.2);
+    }
+
+    .foc-btn-copy.active:hover {
+      border-color: rgba(52, 211, 153, 0.6);
+    }
+
+    .foc-btn-copy.active svg {
+      color: #34d399;
+    }
+
+    /* Tooltip pulse on first load */
+    .foc-toolbar-btn.foc-pulse {
+      animation: foc-pulse-ring 2s ease-out 1;
+    }
+
+    @keyframes foc-pulse-ring {
+      0% { box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 0 rgba(134, 59, 255, 0.4); }
+      70% { box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 12px rgba(134, 59, 255, 0); }
+      100% { box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 0 rgba(134, 59, 255, 0); }
+    }
+
+    /* Copy-paste enabled: override all user-select:none */
+    body.foc-copy-enabled,
+    body.foc-copy-enabled *,
+    body.foc-copy-enabled *::before,
+    body.foc-copy-enabled *::after {
+      -webkit-user-select: text !important;
+      user-select: text !important;
+      -webkit-touch-callout: default !important;
+    }
+  </style>
+
+  <div class="foc-toolbar" id="foc-toolbar">
+    <!-- Home Button -->
+    <button class="foc-toolbar-btn foc-btn-home" id="foc-btn-home" title="Back to Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/>
+      </svg>
+      <span class="foc-btn-label">Home</span>
+    </button>
+
+<!-- Copy-Paste Toggle -->
+    <button class="foc-toolbar-btn foc-btn-copy foc-pulse" id="foc-btn-copy" title="Enable Copy & Paste">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+      </svg>
+      <span class="foc-btn-label">Copy & Paste</span>
+    </button>
+  </div>
+
+  <script>
+    (function() {
+// Home button
+      document.getElementById('foc-btn-home').addEventListener('click', function() {
+        window.location.href = './index.html';
+      });
+
+// Copy-paste toggle
+      var copyBtn = document.getElementById('foc-btn-copy');
+      var isEnabled = false;
+
+      copyBtn.addEventListener('click', function() {
+        isEnabled = !isEnabled;
+        document.body.classList.toggle('foc-copy-enabled', isEnabled);
+        copyBtn.classList.toggle('active', isEnabled);
+        copyBtn.title = isEnabled ? 'Disable Copy & Paste' : 'Enable Copy & Paste';
+
+        // Update label
+        var label = copyBtn.querySelector('.foc-btn-label');
+        if (label) {
+          label.textContent = isEnabled ? 'Copying On' : 'Copy & Paste';
+        }
+
+        // Update icon to checkmark when active
+        var svg = copyBtn.querySelector('svg');
+        if (isEnabled) {
+          svg.innerHTML = '<path d="M20 6L9 17l-5-5"/>';
+        } else {
+          svg.innerHTML = '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
