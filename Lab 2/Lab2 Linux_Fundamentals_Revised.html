@@ -825,5 +825,170 @@ document.querySelectorAll('.copy').forEach((button) => {
   });
 });
 </script>
+
+  <!-- Floating Toolbar: Home + Copy-Paste Toggle -->
+  <style>
+    .foc-toolbar {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .foc-toolbar-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .foc-toolbar-btn:hover {
+      width: auto;
+      padding: 0 16px;
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(134, 59, 255, 0.4);
+      color: #e2e8f0;
+      box-shadow: 0 4px 32px rgba(134, 59, 255, 0.15), 0 0 0 1px rgba(134, 59, 255, 0.2);
+      transform: translateX(-2px);
+    }
+
+    .foc-toolbar-btn:active {
+      transform: scale(0.96) translateX(-2px);
+    }
+
+    .foc-toolbar-btn .foc-btn-label {
+      display: none;
+    }
+
+    .foc-toolbar-btn:hover .foc-btn-label {
+      display: inline;
+    }
+
+    .foc-toolbar-btn svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+/* Home button specific */
+    .foc-btn-home:hover {
+      border-color: rgba(71, 191, 255, 0.4);
+      box-shadow: 0 4px 32px rgba(71, 191, 255, 0.12), 0 0 0 1px rgba(71, 191, 255, 0.2);
+    }
+
+    .foc-btn-home:hover svg {
+      color: #47bfff;
+    }
+
+/* Copy toggle active state */
+    .foc-btn-copy.active {
+      border-color: rgba(52, 211, 153, 0.5);
+      background: rgba(6, 78, 59, 0.6);
+      color: #6ee7b7;
+      box-shadow: 0 4px 32px rgba(52, 211, 153, 0.15), 0 0 0 1px rgba(52, 211, 153, 0.2);
+    }
+
+    .foc-btn-copy.active:hover {
+      border-color: rgba(52, 211, 153, 0.6);
+    }
+
+    .foc-btn-copy.active svg {
+      color: #34d399;
+    }
+
+    /* Tooltip pulse on first load */
+    .foc-toolbar-btn.foc-pulse {
+      animation: foc-pulse-ring 2s ease-out 1;
+    }
+
+    @keyframes foc-pulse-ring {
+      0% { box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 0 rgba(134, 59, 255, 0.4); }
+      70% { box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 12px rgba(134, 59, 255, 0); }
+      100% { box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 0 rgba(134, 59, 255, 0); }
+    }
+
+    /* Copy-paste enabled: override all user-select:none */
+    body.foc-copy-enabled,
+    body.foc-copy-enabled *,
+    body.foc-copy-enabled *::before,
+    body.foc-copy-enabled *::after {
+      -webkit-user-select: text !important;
+      user-select: text !important;
+      -webkit-touch-callout: default !important;
+    }
+  </style>
+
+  <div class="foc-toolbar" id="foc-toolbar">
+    <!-- Home Button -->
+    <button class="foc-toolbar-btn foc-btn-home" id="foc-btn-home" title="Back to Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/>
+      </svg>
+      <span class="foc-btn-label">Home</span>
+    </button>
+
+<!-- Copy-Paste Toggle -->
+    <button class="foc-toolbar-btn foc-btn-copy foc-pulse" id="foc-btn-copy" title="Enable Copy &amp; Paste">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+      </svg>
+      <span class="foc-btn-label">Copy &amp; Paste</span>
+    </button>
+  </div>
+
+  <script>
+    (function() {
+// Home button
+      document.getElementById('foc-btn-home').addEventListener('click', function() {
+        window.location.href = '../index.html';
+      });
+
+// Copy-paste toggle
+      var copyBtn = document.getElementById('foc-btn-copy');
+      var isEnabled = false;
+
+      copyBtn.addEventListener('click', function() {
+        isEnabled = !isEnabled;
+        document.body.classList.toggle('foc-copy-enabled', isEnabled);
+        copyBtn.classList.toggle('active', isEnabled);
+        copyBtn.title = isEnabled ? 'Disable Copy & Paste' : 'Enable Copy & Paste';
+
+        // Update label
+        var label = copyBtn.querySelector('.foc-btn-label');
+        if (label) {
+          label.textContent = isEnabled ? 'Copying On' : 'Copy & Paste';
+        }
+
+        // Update icon to checkmark when active
+        var svg = copyBtn.querySelector('svg');
+        if (isEnabled) {
+          svg.innerHTML = '<path d="M20 6L9 17l-5-5"/>';
+        } else {
+          svg.innerHTML = '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>';
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
